@@ -1,0 +1,27 @@
+# Виртуальное окружение
+venv/
+env/
+.venv/
+.env
+
+# Кэш Python и байт-код
+__pycache__/
+*.py[cod]
+*.so
+
+# Файлы IDE (PyCharm, VS Code и др.)
+.vscode/
+.idea/
+*.iml
+
+# Файлы базы данных
+*.db
+*.sqlite3
+
+# Логи
+*.log
+
+# Сгенерированная документация
+.DS_Store
+git config --global user.email "you@example.com"
+git config --global user.name "Your Name"
