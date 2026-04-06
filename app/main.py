@@ -7,14 +7,14 @@ from app.models import user
 app = FastAPI(
     title=settings.app_name,
     version=settings.app_version,
-    debug=settings.debug,
+    # debug=settings.debug,
 )
 
 app.include_router(api_router, prefix="/api/v1")
 
-
 @app.get("/")
 def root():
-    return {"message": "Backend работает 🚀"}
+    return {"message": "Backend говорит help word"}
 
+# Создаём таблицы в БД (только для разработки!)
 Base.metadata.create_all(bind=engine)

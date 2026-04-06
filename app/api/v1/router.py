@@ -9,21 +9,16 @@ from app.core.security import verify_password, create_access_token
 from app.core.deps import get_current_user
 from app.models.user import User
 
+from app.core.deps import get_current_user, require_role
+
 router = APIRouter()
 
-
-@router.get("/ping")
-def ping():
-    return {"message": "pong"}
-
-
-# СОЗДАНИЕ
 @router.post("/users", response_model=UserResponse)
 def create_user_endpoint(user: UserCreate, db: Session = Depends(get_db)):
     return create_user(db, user)
 
 
-# ПОЛУЧЕНИЕ
+
 @router.get("/users/{user_id}", response_model=UserResponse)
 def get_user_endpoint(user_id: int, db: Session = Depends(get_db)):
     user = get_user(db, user_id)
@@ -34,7 +29,7 @@ def get_user_endpoint(user_id: int, db: Session = Depends(get_db)):
     return user
 
 
-# 🔐 ЛОГИН (ВАЖНО!)
+
 @router.post("/login")
 def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
@@ -50,7 +45,10 @@ def login(
     return {"access_token": token, "token_type": "bearer"}
 
 
-# 👤 ТЕКУЩИЙ ПОЛЬЗОВАТЕЛЬ
 @router.get("/me", response_model=UserResponse)
 def get_me(current_user: User = Depends(get_current_user)):
     return current_user
+
+@router.get("/admin-panel")
+def admin_panel(user: User = Depends(require_role("admin"))):
+    return {"message": f"Привет, админ {user.full_name}!", "role": user.role}
