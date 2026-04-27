@@ -21,7 +21,13 @@
       <nav class="site-nav" aria-label="Разделы сайта">
         <ul>
           <li><a href="/#company" class="site-nav-link" data-nav="company">Главная</a></li>
-          <li><a href="/library.html" class="site-nav-link" data-nav="library">Библиотека</a></li>
+          <li class="has-submenu">
+            <span class="site-nav-link site-nav-label" data-nav="library" aria-haspopup="true">Библиотека</span>
+            <ul class="submenu" role="menu">
+              <li><a href="/library.html" data-nav="library">Виды работ</a></li>
+              <li><a href="/projects.html" data-nav="projects">Готовые проекты</a></li>
+            </ul>
+          </li>
           <li><a href="/calculator.html" class="site-nav-link" data-nav="calc">Расчёт</a></li>
           <li><a href="/#contacts" class="site-nav-link" data-nav="contacts">Контакты</a></li>
         </ul>
@@ -135,6 +141,10 @@
               <input class="input" id="staffMatType" type="text" placeholder="ЖБИ, сталь…">
             </div>
             <div class="field" style="margin-bottom: 12px;">
+              <label>Обложка</label>
+              <input class="input" id="staffCover" type="file" accept="image/*">
+            </div>
+            <div class="field" style="margin-bottom: 12px;">
               <label><input type="checkbox" id="staffFeatured"> Избранное на сайте</label>
             </div>
             <button type="button" class="btn primary" id="btnAddSolution">Добавить в каталог</button>
@@ -142,7 +152,7 @@
           </div>
         </div>
 
-        <div class="panel-box">
+        <div class="panel-box" style="margin-bottom: 24px;">
           <div class="panel-head">
             <h3>Все решения</h3>
           </div>
@@ -162,6 +172,60 @@
             </table>
           </div>
         </div>
+
+        <div class="panel-box" style="margin-bottom: 24px;">
+          <div class="panel-head">
+            <h3>Добавить готовый проект</h3>
+          </div>
+          <div style="padding: 18px;">
+            <p class="muted" style="font-size:13px; margin-bottom:14px;">Готовый проект отображается на вкладке «Готовые проекты» в библиотеке. Удаление снимает проект с публикации.</p>
+            <div class="field" style="margin-bottom: 12px;">
+              <label>Название</label>
+              <input class="input" id="showName" type="text" placeholder="Например: Ангар 18×36 м">
+            </div>
+            <div class="field" style="margin-bottom: 12px;">
+              <label>Описание</label>
+              <textarea id="showDesc" placeholder="Что построено, какие материалы, особенности"></textarea>
+            </div>
+            <div class="three" style="margin-bottom: 12px;">
+              <div class="field" style="margin-bottom:0;">
+                <label>Адрес</label>
+                <input class="input" id="showAddr" type="text" placeholder="г. Москва, ул. ...">
+              </div>
+              <div class="field" style="margin-bottom:0;">
+                <label>Стоимость, ₽</label>
+                <input class="input mono" id="showCost" type="number" min="0" step="1" placeholder="0">
+              </div>
+              <div class="field" style="margin-bottom:0;">
+                <label>Обложка</label>
+                <input class="input" id="showCover" type="file" accept="image/*">
+              </div>
+            </div>
+            <button type="button" class="btn primary" id="btnAddShowcase">Добавить проект</button>
+            <span id="showMsg" class="msg" style="display:inline-block;margin-left:12px;"></span>
+          </div>
+        </div>
+
+        <div class="panel-box">
+          <div class="panel-head">
+            <h3>Все готовые проекты</h3>
+          </div>
+          <div style="padding: 0; overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Название</th>
+                  <th>Адрес</th>
+                  <th>Стоимость</th>
+                  <th>На сайте</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="showBody"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -176,7 +240,6 @@
   <script>
     const API = '/api/v1';
     const token = () => localStorage.getItem('access_token');
-    const authHeaders = () => ({ 'Authorization': 'Bearer ' + token(), 'Content-Type': 'application/json' });
 
     async function loadPublicConfig() {
       try {
@@ -326,23 +389,29 @@
       const category_id = parseInt(document.getElementById('staffCat').value, 10);
       const name = document.getElementById('staffName').value.trim();
       const slug = document.getElementById('staffSlug').value.trim().toLowerCase();
-      const body = {
-        category_id,
-        name,
-        slug,
-        code: document.getElementById('staffCode').value.trim() || null,
-        short_description: document.getElementById('staffShort').value.trim() || null,
-        description: null,
-        base_material_cost: parseFloat(document.getElementById('staffMat').value) || 0,
-        base_work_cost: parseFloat(document.getElementById('staffWork').value) || 0,
-        material_type: document.getElementById('staffMatType').value.trim() || null,
-        is_featured: document.getElementById('staffFeatured').checked,
-      };
       if (!name || !slug) {
         msgEl.textContent = 'Укажите название и slug';
         return;
       }
-      const r = await fetch(API + '/admin/solutions', { method: 'POST', headers: authHeaders(), body: JSON.stringify(body) });
+      const body = new FormData();
+      body.append('category_id', String(category_id));
+      body.append('name', name);
+      body.append('slug', slug);
+      body.append('code', document.getElementById('staffCode').value.trim());
+      body.append('short_description', document.getElementById('staffShort').value.trim());
+      body.append('description', '');
+      body.append('base_material_cost', String(parseFloat(document.getElementById('staffMat').value) || 0));
+      body.append('base_work_cost', String(parseFloat(document.getElementById('staffWork').value) || 0));
+      body.append('material_type', document.getElementById('staffMatType').value.trim());
+      body.append('is_featured', document.getElementById('staffFeatured').checked ? 'true' : 'false');
+      const cover = document.getElementById('staffCover').files[0];
+      if (cover) body.append('cover_file', cover);
+
+      const r = await fetch(API + '/admin/solutions', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token() },
+        body,
+      });
       if (!r.ok) {
         try {
           const e = await r.json();
@@ -358,7 +427,96 @@
       document.getElementById('staffSlug').value = '';
       document.getElementById('staffCode').value = '';
       document.getElementById('staffShort').value = '';
+      document.getElementById('staffCover').value = '';
       loadStaffSolutions();
+    };
+
+    function formatRubMaybe(v) {
+      const n = Number(v || 0);
+      if (!n) return '—';
+      return n.toLocaleString('ru-RU') + ' ₽';
+    }
+
+    async function loadStaffShowcase() {
+      const r = await fetch(API + '/admin/showcase-projects', { headers: { 'Authorization': 'Bearer ' + token() } });
+      const tb = document.getElementById('showBody');
+      if (!r.ok) {
+        tb.innerHTML = '<tr><td colspan="6" class="sm">Не удалось загрузить готовые проекты</td></tr>';
+        return;
+      }
+      const rows = await r.json();
+      tb.innerHTML = '';
+      if (!rows.length) {
+        tb.innerHTML = '<tr><td colspan="6" class="sm">Готовых проектов пока нет</td></tr>';
+        return;
+      }
+      rows.forEach(p => {
+        const tr = document.createElement('tr');
+        const active = p.is_active;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn ghost';
+        btn.textContent = active ? 'Снять с сайта' : '—';
+        btn.disabled = !active;
+        btn.onclick = async () => {
+          if (!confirm('Снять проект «' + p.name + '» с публикации?')) return;
+          const d = await fetch(API + '/admin/showcase-projects/' + p.id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token() } });
+          if (!d.ok) { alert(await d.text()); return; }
+          loadStaffShowcase();
+        };
+        const tdAct = document.createElement('td');
+        tdAct.appendChild(btn);
+        tr.innerHTML =
+          '<td class="mono">' + p.id + '</td>' +
+          '<td>' + escapeHtml(p.name) + '</td>' +
+          '<td class="sm">' + escapeHtml(p.address || '—') + '</td>' +
+          '<td class="mono">' + formatRubMaybe(p.project_cost) + '</td>' +
+          '<td>' + (active ? '<span class="status done">да</span>' : '<span class="status cancelled">нет</span>') + '</td>';
+        tr.appendChild(tdAct);
+        tb.appendChild(tr);
+      });
+    }
+
+    document.getElementById('btnAddShowcase').onclick = async () => {
+      const msgEl = document.getElementById('showMsg');
+      msgEl.textContent = '';
+      msgEl.className = 'msg';
+      const name = document.getElementById('showName').value.trim();
+      if (!name) {
+        msgEl.textContent = 'Укажите название проекта';
+        return;
+      }
+      const body = new FormData();
+      body.append('name', name);
+      body.append('description', document.getElementById('showDesc').value.trim());
+      body.append('address', document.getElementById('showAddr').value.trim());
+      const cost = document.getElementById('showCost').value.trim();
+      if (cost !== '') body.append('project_cost', cost);
+      const cover = document.getElementById('showCover').files[0];
+      if (cover) body.append('cover_file', cover);
+
+      const r = await fetch(API + '/admin/showcase-projects', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token() },
+        body,
+      });
+      if (!r.ok) {
+        try {
+          const e = await r.json();
+          msgEl.textContent = typeof e.detail === 'string' ? e.detail : JSON.stringify(e.detail);
+        } catch (_) {
+          msgEl.textContent = await r.text();
+        }
+        return;
+      }
+      msgEl.textContent = 'Проект добавлен';
+      msgEl.className = 'msg ok';
+      document.getElementById('showName').value = '';
+      document.getElementById('showDesc').value = '';
+      document.getElementById('showAddr').value = '';
+      document.getElementById('showCost').value = '';
+      document.getElementById('showCover').value = '';
+      loadStaffShowcase();
     };
 
     async function init() {
@@ -386,6 +544,7 @@
         await loadStaffCategories();
         await loadStaffUsers();
         await loadStaffSolutions();
+        await loadStaffShowcase();
       } else {
         document.getElementById('clientPanel').style.display = 'block';
         await runClient();

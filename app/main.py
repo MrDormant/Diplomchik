@@ -47,6 +47,14 @@ async def library_page():
     return {"detail": "library.html not found"}
 
 
+@app.get("/projects.html")
+async def projects_page():
+    path = os.path.join(_static_dir, "projects.html")
+    if os.path.isfile(path):
+        return FileResponse(path)
+    return {"detail": "projects.html not found"}
+
+
 @app.get("/cabinet.html")
 async def cabinet_page():
     path = os.path.join(_static_dir, "cabinet.html")

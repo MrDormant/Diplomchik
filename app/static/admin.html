@@ -21,7 +21,13 @@
       <nav class="site-nav" aria-label="Разделы сайта">
         <ul>
           <li><a href="/#company" class="site-nav-link" data-nav="company">Главная</a></li>
-          <li><a href="/library.html" class="site-nav-link" data-nav="library">Библиотека</a></li>
+          <li class="has-submenu">
+            <span class="site-nav-link site-nav-label" data-nav="library" aria-haspopup="true">Библиотека</span>
+            <ul class="submenu" role="menu">
+              <li><a href="/library.html" data-nav="library">Виды работ</a></li>
+              <li><a href="/projects.html" data-nav="projects">Готовые проекты</a></li>
+            </ul>
+          </li>
           <li><a href="/calculator.html" class="site-nav-link" data-nav="calc">Расчёт</a></li>
           <li><a href="/#contacts" class="site-nav-link" data-nav="contacts">Контакты</a></li>
         </ul>

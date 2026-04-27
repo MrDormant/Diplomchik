@@ -50,6 +50,7 @@ class Solution(Base):
     is_featured = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, nullable=True)
+    cover_image = Column(String(512), nullable=True)
 
     category = relationship("SolutionCategory", back_populates="solutions")
     files = relationship("SolutionFile", back_populates="solution", cascade="all, delete-orphan")

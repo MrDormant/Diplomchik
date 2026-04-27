@@ -15,6 +15,7 @@ class SolutionListItem(BaseModel):
     base_work_cost: Decimal | None
     cost_unit: str | None
     is_featured: bool
+    cover_image: str | None = None
 
     model_config = {"from_attributes": True}
 
@@ -24,6 +25,7 @@ class SolutionDetail(SolutionListItem):
     load_capacity_kn_m2: Decimal | None
     span_width_m: Decimal | None
     created_at: datetime
+    cover_image: str | None = None
 
     model_config = {"from_attributes": True}
 
@@ -45,6 +47,7 @@ class AdminSolutionCreate(BaseModel):
     code: str | None = Field(None, max_length=50)
     short_description: str | None = Field(None, max_length=255)
     description: str | None = None
+    cover_image: str | None = Field(None, max_length=512)
     base_material_cost: Decimal = Decimal("0")
     base_work_cost: Decimal = Decimal("0")
     material_type: str | None = Field(None, max_length=120)
@@ -59,6 +62,7 @@ class AdminSolutionRow(BaseModel):
     category_id: int
     category_name: str
     short_description: str | None
+    cover_image: str | None = None
     material_type: str | None
     base_material_cost: Decimal | None
     base_work_cost: Decimal | None

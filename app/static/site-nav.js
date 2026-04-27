@@ -11,6 +11,7 @@
     var key = null;
 
     if (path.indexOf('library.html') !== -1) key = 'library';
+    else if (path.indexOf('projects.html') !== -1) key = 'library';
     else if (path.indexOf('calculator.html') !== -1) key = 'calc';
     else if (path === '/' || path === '' || path.endsWith('/')) {
       if (hash === '#contacts') key = 'contacts';

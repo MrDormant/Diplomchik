@@ -12,6 +12,7 @@ sys.path.insert(0, str(ROOT))
 from sqlalchemy.orm import Session  # noqa: E402
 
 from app.db.database import SessionLocal, engine, Base  # noqa: E402
+from app.db.schema_patches import apply_schema_patches  # noqa: E402
 import app.models  # noqa: F401, E402
 from app.core.enums import UserRole  # noqa: E402
 from app.core.security import hash_password  # noqa: E402
@@ -19,8 +20,12 @@ from app.models.user import User  # noqa: E402
 from app.models.solution import Solution, SolutionCategory  # noqa: E402
 
 
+DEFAULT_COVER_IMAGE = "/assets/library-covers/ALUDAR.jpg"
+
+
 def seed() -> None:
     Base.metadata.create_all(bind=engine)
+    apply_schema_patches(engine)
     db: Session = SessionLocal()
     try:
         if db.query(SolutionCategory).count() == 0:
@@ -48,6 +53,7 @@ def seed() -> None:
                     base_material_cost=8500,
                     base_work_cost=3200,
                     material_type="ЖБИ",
+                    cover_image=DEFAULT_COVER_IMAGE,
                     is_featured=True,
                 ),
                 Solution(
@@ -60,6 +66,7 @@ def seed() -> None:
                     base_material_cost=9200,
                     base_work_cost=4100,
                     material_type="Оцинкованная сталь",
+                    cover_image=DEFAULT_COVER_IMAGE,
                     is_featured=True,
                 ),
                 Solution(
@@ -72,12 +79,18 @@ def seed() -> None:
                     base_material_cost=7800,
                     base_work_cost=2800,
                     material_type="ППУ + сталь",
+                    cover_image=DEFAULT_COVER_IMAGE,
                     is_featured=True,
                 ),
             ]
             for s in solutions:
                 db.add(s)
             db.commit()
+
+        db.query(Solution).filter(Solution.cover_image.is_(None)).update(
+            {Solution.cover_image: DEFAULT_COVER_IMAGE},
+            synchronize_session=False,
+        )
 
         if db.query(User).filter(User.email == "admin@test.local").first() is None:
             db.add(
