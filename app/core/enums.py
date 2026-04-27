@@ -1,5 +1,20 @@
 from enum import StrEnum
 
-class UserStatus(StrEnum):
-    CLIENT="client"
-    ADMIN="admin"
+
+class UserRole(StrEnum):
+    CLIENT = "client"
+    MANAGER = "manager"
+    ADMIN = "admin"
+
+
+class RequestStatus(StrEnum):
+    NEW = "new"
+    IN_PROGRESS = "in_progress"
+    QUOTED = "quoted"
+    DONE = "done"
+    CANCELLED = "cancelled"
+
+
+class RequestSource(StrEnum):
+    CALCULATOR = "calculator"
+    LIBRARY = "library"

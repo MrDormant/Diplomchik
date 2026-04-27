@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Личный кабинет — СтройТехПроект</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="container top-row">
+      <a href="/" class="logo-link" aria-label="Главная страница">
+        <div class="logo">
+          <div class="mark">СТ</div>
+          <div>
+            <h1>СтройТехПроект</h1>
+            <small>Инжиниринг промышленных объектов</small>
+          </div>
+        </div>
+      </a>
+      <nav class="site-nav" aria-label="Разделы сайта">
+        <ul>
+          <li><a href="/#company" class="site-nav-link" data-nav="company">Главная</a></li>
+          <li><a href="/library.html" class="site-nav-link" data-nav="library">Библиотека</a></li>
+          <li><a href="/calculator.html" class="site-nav-link" data-nav="calc">Расчёт</a></li>
+          <li><a href="/#contacts" class="site-nav-link" data-nav="contacts">Контакты</a></li>
+        </ul>
+      </nav>
+      <div class="actions">
+        <a id="managerTel" class="btn call" href="tel:+74951234567">+7 (495) 123-45-67</a>
+        <button class="btn ghost" id="btnLogout" type="button">Выйти</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="block">
+    <div class="container">
+      <p id="msg" class="lead" style="color:var(--muted);"></p>
+
+      <div id="clientPanel" style="display:none;">
+        <div class="block-head">
+          <h2>Мои заявки</h2>
+          <span class="code">USR · история заявок</span>
+        </div>
+        <div class="panel-box" id="tbl" style="display:none;">
+          <div class="panel-head">
+            <h3>История обращений</h3>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>№</th>
+                <th>Статус</th>
+                <th>Источник</th>
+                <th>Создана</th>
+                <th>Комментарий менеджера</th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="staffPanel" style="display:none;">
+        <div class="block-head">
+          <h2>Кабинет менеджера</h2>
+          <span class="code">STAFF</span>
+        </div>
+        <p class="lead" style="margin-bottom: 20px;">
+          Обработка заявок — в отдельной панели (там же смена статусов и заметки).
+          <a class="btn primary" href="/admin.html" style="margin-left:8px;">Все заявки</a>
+        </p>
+
+        <div class="panel-box" style="margin-bottom: 24px;">
+          <div class="panel-head">
+            <h3>Пользователи</h3>
+          </div>
+          <div style="padding: 0; overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Имя</th>
+                  <th>Email</th>
+                  <th>Телефон</th>
+                  <th>Роль</th>
+                  <th>Регистрация</th>
+                </tr>
+              </thead>
+              <tbody id="staffUsersBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel-box" style="margin-bottom: 24px;">
+          <div class="panel-head">
+            <h3>Добавить решение в каталог</h3>
+          </div>
+          <div style="padding: 18px;">
+            <p class="muted" style="font-size:13px; margin-bottom:14px;">Slug — латиница и дефисы, например <code>my-solution</code>. Удаление снимает решение с сайта (публикация отключена).</p>
+            <div class="three" style="margin-bottom: 12px;">
+              <div class="field" style="margin-bottom:0;">
+                <label>Категория</label>
+                <select id="staffCat" class="input"></select>
+              </div>
+              <div class="field" style="margin-bottom:0;">
+                <label>Название</label>
+                <input class="input" id="staffName" type="text" placeholder="Название">
+              </div>
+              <div class="field" style="margin-bottom:0;">
+                <label>Slug</label>
+                <input class="input mono" id="staffSlug" type="text" placeholder="latin-slug">
+              </div>
+            </div>
+            <div class="three" style="margin-bottom: 12px;">
+              <div class="field" style="margin-bottom:0;">
+                <label>Код (необяз.)</label>
+                <input class="input mono" id="staffCode" type="text" placeholder="FND-002">
+              </div>
+              <div class="field" style="margin-bottom:0;">
+                <label>Материал, ₽</label>
+                <input class="input mono" id="staffMat" type="number" min="0" step="1" value="0">
+              </div>
+              <div class="field" style="margin-bottom:0;">
+                <label>Работы, ₽</label>
+                <input class="input mono" id="staffWork" type="number" min="0" step="1" value="0">
+              </div>
+            </div>
+            <div class="field" style="margin-bottom: 12px;">
+              <label>Краткое описание</label>
+              <input class="input" id="staffShort" type="text" placeholder="Одна строка для карточки">
+            </div>
+            <div class="field" style="margin-bottom: 12px;">
+              <label>Тип материала</label>
+              <input class="input" id="staffMatType" type="text" placeholder="ЖБИ, сталь…">
+            </div>
+            <div class="field" style="margin-bottom: 12px;">
+              <label><input type="checkbox" id="staffFeatured"> Избранное на сайте</label>
+            </div>
+            <button type="button" class="btn primary" id="btnAddSolution">Добавить в каталог</button>
+            <span id="staffSolMsg" class="msg" style="display:inline-block;margin-left:12px;"></span>
+          </div>
+        </div>
+
+        <div class="panel-box">
+          <div class="panel-head">
+            <h3>Все решения</h3>
+          </div>
+          <div style="padding: 0; overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Код</th>
+                  <th>Название</th>
+                  <th>Категория</th>
+                  <th>На сайте</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="staffSolBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container row">
+      <div>© СтройТехПроект</div>
+      <div class="mono">+7 (495) 123-45-67 · <a href="mailto:info@stroytechproekt.ru">info@stroytechproekt.ru</a></div>
+    </div>
+  </footer>
+
+  <script>
+    const API = '/api/v1';
+    const token = () => localStorage.getItem('access_token');
+    const authHeaders = () => ({ 'Authorization': 'Bearer ' + token(), 'Content-Type': 'application/json' });
+
+    async function loadPublicConfig() {
+      try {
+        const j = await (await fetch(API + '/public/config')).json();
+        const tel = j.manager_phone || '+74951234567';
+        const href = j.manager_phone_tel || ('tel:' + tel.replace(/[^+0-9]/g, ''));
+        const mgr = document.getElementById('managerTel');
+        mgr.href = href;
+        mgr.textContent = tel;
+      } catch (e) {}
+    }
+    loadPublicConfig();
+
+    document.getElementById('btnLogout').onclick = () => {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('manager_token');
+      location.href = '/';
+    };
+
+    function escapeHtml(s) {
+      return (s || '').replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[c]));
+    }
+
+    function statusClass(status) {
+      const map = { new: 'new', in_progress: 'in_progress', quoted: 'quoted', done: 'done', cancelled: 'cancelled' };
+      return map[status] || 'new';
+    }
+
+    function statusLabel(status) {
+      const map = {
+        new: 'новая', in_progress: 'в работе', quoted: 'КП отправлено', done: 'завершена', cancelled: 'отменена'
+      };
+      return map[status] || status;
+    }
+
+    async function runClient() {
+      const r = await fetch(API + '/requests', { headers: { 'Authorization': 'Bearer ' + token() } });
+      if (!r.ok) {
+        if (r.status === 401) {
+          localStorage.removeItem('access_token');
+          document.getElementById('msg').textContent = 'Сессия недействительна — войдите снова.';
+          document.getElementById('msg').style.color = 'var(--danger)';
+          return;
+        }
+        document.getElementById('msg').textContent = 'Нет доступа к заявкам';
+        return;
+      }
+      const rows = await r.json();
+      if (!rows.length) {
+        document.getElementById('msg').textContent = 'Пока нет заявок. Сделайте расчёт на главной или выберите решение в библиотеке.';
+        return;
+      }
+      document.getElementById('msg').textContent = '';
+      document.getElementById('tbl').style.display = 'block';
+      const tb = document.getElementById('tbody');
+      tb.innerHTML = '';
+      rows.forEach(x => {
+        const tr = document.createElement('tr');
+        tr.innerHTML =
+          '<td class="num mono">#' + x.id + '</td>' +
+          '<td><span class="status ' + statusClass(x.status) + '">' + statusLabel(x.status) + '</span></td>' +
+          '<td class="sm">' + escapeHtml(x.source === 'calculator' ? 'Калькулятор' : 'Библиотека') + '</td>' +
+          '<td class="sm mono">' + new Date(x.created_at).toLocaleString('ru-RU') + '</td>' +
+          '<td>' + escapeHtml(x.manager_note || '—') + '</td>';
+        tb.appendChild(tr);
+      });
+    }
+
+    async function loadStaffCategories() {
+      const r = await fetch(API + '/categories');
+      if (!r.ok) return;
+      const list = await r.json();
+      const sel = document.getElementById('staffCat');
+      sel.innerHTML = '';
+      list.forEach(c => {
+        const o = document.createElement('option');
+        o.value = c.id;
+        o.textContent = c.name + ' (' + c.slug + ')';
+        sel.appendChild(o);
+      });
+    }
+
+    async function loadStaffUsers() {
+      const r = await fetch(API + '/admin/users', { headers: { 'Authorization': 'Bearer ' + token() } });
+      const tb = document.getElementById('staffUsersBody');
+      if (!r.ok) {
+        tb.innerHTML = '<tr><td colspan="6" class="sm">Не удалось загрузить пользователей</td></tr>';
+        return;
+      }
+      const rows = await r.json();
+      tb.innerHTML = '';
+      rows.forEach(u => {
+        const tr = document.createElement('tr');
+        tr.innerHTML =
+          '<td class="mono">' + u.id + '</td>' +
+          '<td>' + escapeHtml(u.full_name) + '</td>' +
+          '<td class="sm">' + escapeHtml(u.email) + '</td>' +
+          '<td class="sm mono">' + escapeHtml(u.phone || '—') + '</td>' +
+          '<td><span class="chip" style="background:var(--cyan-soft);color:var(--navy);border:1px solid var(--line);">' + escapeHtml(u.role) + '</span></td>' +
+          '<td class="sm mono">' + new Date(u.created_at).toLocaleString('ru-RU') + '</td>';
+        tb.appendChild(tr);
+      });
+    }
+
+    async function loadStaffSolutions() {
+      const r = await fetch(API + '/admin/solutions', { headers: { 'Authorization': 'Bearer ' + token() } });
+      const tb = document.getElementById('staffSolBody');
+      if (!r.ok) {
+        tb.innerHTML = '<tr><td colspan="6" class="sm">Нет доступа к каталогу</td></tr>';
+        return;
+      }
+      const rows = await r.json();
+      tb.innerHTML = '';
+      rows.forEach(s => {
+        const tr = document.createElement('tr');
+        const active = s.is_active;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn ghost';
+        btn.textContent = active ? 'Снять с сайта' : '—';
+        btn.disabled = !active;
+        btn.onclick = async () => {
+          if (!confirm('Снять решение «' + s.name + '» с публикации на сайте?')) return;
+          const d = await fetch(API + '/admin/solutions/' + s.id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token() } });
+          if (!d.ok) { alert(await d.text()); return; }
+          loadStaffSolutions();
+        };
+        const tdAct = document.createElement('td');
+        tdAct.appendChild(btn);
+        tr.innerHTML =
+          '<td class="mono">' + s.id + '</td>' +
+          '<td class="mono">' + escapeHtml(s.code || '—') + '</td>' +
+          '<td>' + escapeHtml(s.name) + '</td>' +
+          '<td class="sm">' + escapeHtml(s.category_name) + '</td>' +
+          '<td>' + (active ? '<span class="status done">да</span>' : '<span class="status cancelled">нет</span>') + '</td>';
+        tr.appendChild(tdAct);
+        tb.appendChild(tr);
+      });
+    }
+
+    document.getElementById('btnAddSolution').onclick = async () => {
+      const msgEl = document.getElementById('staffSolMsg');
+      msgEl.textContent = '';
+      msgEl.className = 'msg';
+      const category_id = parseInt(document.getElementById('staffCat').value, 10);
+      const name = document.getElementById('staffName').value.trim();
+      const slug = document.getElementById('staffSlug').value.trim().toLowerCase();
+      const body = {
+        category_id,
+        name,
+        slug,
+        code: document.getElementById('staffCode').value.trim() || null,
+        short_description: document.getElementById('staffShort').value.trim() || null,
+        description: null,
+        base_material_cost: parseFloat(document.getElementById('staffMat').value) || 0,
+        base_work_cost: parseFloat(document.getElementById('staffWork').value) || 0,
+        material_type: document.getElementById('staffMatType').value.trim() || null,
+        is_featured: document.getElementById('staffFeatured').checked,
+      };
+      if (!name || !slug) {
+        msgEl.textContent = 'Укажите название и slug';
+        return;
+      }
+      const r = await fetch(API + '/admin/solutions', { method: 'POST', headers: authHeaders(), body: JSON.stringify(body) });
+      if (!r.ok) {
+        try {
+          const e = await r.json();
+          msgEl.textContent = typeof e.detail === 'string' ? e.detail : JSON.stringify(e.detail);
+        } catch (_) {
+          msgEl.textContent = await r.text();
+        }
+        return;
+      }
+      msgEl.textContent = 'Сохранено';
+      msgEl.className = 'msg ok';
+      document.getElementById('staffName').value = '';
+      document.getElementById('staffSlug').value = '';
+      document.getElementById('staffCode').value = '';
+      document.getElementById('staffShort').value = '';
+      loadStaffSolutions();
+    };
+
+    async function init() {
+      const msg = document.getElementById('msg');
+      if (!token()) {
+        msg.textContent = 'Нужна авторизация. На главной нажмите «Вход» или перейдите по ссылке из библиотеки.';
+        msg.style.color = 'var(--danger)';
+        return;
+      }
+      const meR = await fetch(API + '/me', { headers: { 'Authorization': 'Bearer ' + token() } });
+      if (!meR.ok) {
+        if (meR.status === 401) {
+          localStorage.removeItem('access_token');
+          msg.textContent = 'Сессия недействительна — войдите снова.';
+          msg.style.color = 'var(--danger)';
+          return;
+        }
+        msg.textContent = 'Не удалось загрузить профиль';
+        return;
+      }
+      const me = await meR.json();
+      msg.textContent = 'Вы вошли как ' + escapeHtml(me.full_name) + ' (' + escapeHtml(me.role) + ').';
+      if (me.role === 'manager' || me.role === 'admin') {
+        document.getElementById('staffPanel').style.display = 'block';
+        await loadStaffCategories();
+        await loadStaffUsers();
+        await loadStaffSolutions();
+      } else {
+        document.getElementById('clientPanel').style.display = 'block';
+        await runClient();
+      }
+    }
+
+    init();
+  </script>
+  <script src="/assets/site-nav.js"></script>
+</body>
+</html>

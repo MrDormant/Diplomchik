@@ -1,9 +1,23 @@
+import os
+
+os.environ.setdefault("PGCLIENTENCODING", "UTF8")
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-DATABASE_URL = "postgresql://postgres:0000@localhost:5432/construction_db"
+from app.core.config import settings
 
-engine = create_engine(DATABASE_URL)
+
+def _sqlalchemy_database_url(url: str) -> str:
+    """Docker и .env используют postgresql://…; для движка нужен драйвер psycopg (v3)."""
+    if url.startswith("postgresql+psycopg://"):
+        return url
+    if url.startswith("postgresql://"):
+        return "postgresql+psycopg://" + url.removeprefix("postgresql://")
+    return url
+
+
+engine = create_engine(_sqlalchemy_database_url(settings.database_url))
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

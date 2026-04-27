@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вариант B — Clean Minimal</title>
+  <style>
+    :root {
+      --bg: #f7f8fa;
+      --panel: #ffffff;
+      --line: #e6e8ee;
+      --text: #0f172a;
+      --muted: #64748b;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --accent-soft: #eff4ff;
+      --success: #059669;
+      --warning: #d97706;
+      --danger: #dc2626;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: var(--text); line-height: 1.55; -webkit-font-smoothing: antialiased; }
+    .container { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: var(--accent-hover); }
+
+    /* === HEADER === */
+    header.top { background: #fff; border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 40; }
+    .top-row { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; gap: 16px; flex-wrap: wrap; }
+    .logo { display: flex; align-items: center; gap: 12px; }
+    .logo .mark {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent) 0%, #4f46e5 100%);
+      color: #fff; font-weight: 700; display: flex; align-items: center; justify-content: center;
+    }
+    .logo h1 { font-size: 17px; font-weight: 600; }
+    .logo small { font-size: 12px; color: var(--muted); display: block; }
+    nav ul { list-style: none; display: flex; gap: 26px; }
+    nav a { color: #334155; font-weight: 500; font-size: 14px; padding: 6px 4px; border-radius: 6px; }
+    nav a:hover { color: var(--accent); }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn {
+      font-size: 14px; padding: 10px 16px; border-radius: 10px;
+      border: 1px solid transparent; cursor: pointer; font-weight: 500; transition: .15s;
+    }
+    .btn.ghost { background: transparent; border-color: var(--line); color: var(--text); }
+    .btn.ghost:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+    .btn.primary { background: var(--accent); color: #fff; }
+    .btn.primary:hover { background: var(--accent-hover); }
+
+    /* === HERO === */
+    .hero { padding: 72px 0; background:
+      radial-gradient(ellipse at top, rgba(37,99,235,.06), transparent 60%);
+    }
+    .hero-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 56px; align-items: center; }
+    @media (max-width: 1000px) { .hero-grid { grid-template-columns: 1fr; } }
+    .badge { display: inline-flex; align-items: center; gap: 8px; background: var(--accent-soft); color: var(--accent); padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: 600; margin-bottom: 18px; }
+    .badge .dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
+    .hero h2 { font-size: 48px; line-height: 1.1; font-weight: 800; margin-bottom: 20px; letter-spacing: -.02em; }
+    .hero h2 span { color: var(--accent); }
+    .hero p.lead { color: var(--muted); font-size: 17px; margin-bottom: 28px; max-width: 520px; }
+    .hero-actions { display: flex; gap: 10px; margin-bottom: 28px; }
+    .trust { display: flex; gap: 24px; color: var(--muted); font-size: 13px; flex-wrap: wrap; }
+    .trust b { color: var(--text); font-weight: 600; margin-right: 6px; }
+
+    /* === CALCULATOR === */
+    .calc {
+      background: #fff; border: 1px solid var(--line); border-radius: 16px;
+      padding: 28px; box-shadow: 0 10px 40px rgba(15,23,42,.08);
+    }
+    .calc h3 { font-size: 20px; margin-bottom: 4px; }
+    .calc .sub { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: #334155; }
+    .input, select {
+      width: 100%; padding: 11px 14px; background: #fff;
+      border: 1px solid var(--line); border-radius: 10px; color: var(--text); font-size: 14px; font-family: inherit;
+    }
+    .input:focus, select:focus { border-color: var(--accent); outline: 3px solid var(--accent-soft); }
+    .three { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+    .result {
+      margin-top: 18px; background: var(--accent-soft);
+      border-radius: 12px; padding: 16px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    }
+    .result div span { font-size: 12px; color: var(--muted); display: block; margin-bottom: 2px; }
+    .result div b { font-size: 18px; font-weight: 700; }
+    .result div b.price { color: var(--accent); font-size: 22px; }
+    .actions-calc { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+
+    /* === BLOCKS === */
+    section.block { padding: 72px 0; }
+    section.block.alt { background: #fff; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .block-head { text-align: left; margin-bottom: 32px; }
+    .block-head h2 { font-size: 30px; font-weight: 700; letter-spacing: -.01em; margin-bottom: 8px; }
+    .block-head p { color: var(--muted); max-width: 640px; }
+
+    /* === LIBRARY CARDS === */
+    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 18px; }
+    .sol {
+      background: #fff; border: 1px solid var(--line); border-radius: 14px;
+      padding: 22px; transition: .2s;
+    }
+    .sol:hover { border-color: var(--accent); box-shadow: 0 8px 24px rgba(37,99,235,.1); transform: translateY(-2px); }
+    .sol .code { font-size: 11px; letter-spacing: 1px; color: var(--accent); font-weight: 700; margin-bottom: 10px; text-transform: uppercase; }
+    .sol h4 { font-size: 16px; margin-bottom: 6px; }
+    .sol p { color: var(--muted); font-size: 14px; min-height: 40px; margin-bottom: 14px; }
+    .sol .meta { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+    .sol .meta .price { color: var(--accent); font-weight: 700; }
+    .sol .btn { width: 100%; }
+
+    /* === TABLE PANEL === */
+    .panel-box { background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+    .panel-head { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--line); gap: 12px; flex-wrap: wrap; }
+    .panel-head h3 { font-size: 16px; font-weight: 600; }
+    .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+    .chip { font-size: 12px; padding: 5px 10px; border-radius: 999px; background: #f1f5f9; color: var(--muted); font-weight: 500; border: 1px solid transparent; }
+    .chip.active { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { background: #f8fafc; color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+    tr:last-child td { border-bottom: none; }
+    .status { display: inline-block; font-size: 12px; padding: 3px 10px; border-radius: 999px; font-weight: 600; }
+    .status.new { background: rgba(37,99,235,.1); color: var(--accent); }
+    .status.progress { background: rgba(217,119,6,.12); color: var(--warning); }
+    .status.done { background: rgba(5,150,105,.12); color: var(--success); }
+    .status.cancel { background: rgba(220,38,38,.1); color: var(--danger); }
+    td.sm { color: var(--muted); font-size: 12px; }
+    select.mini { padding: 6px 10px; font-size: 12px; border-radius: 6px; border: 1px solid var(--line); }
+
+    footer { padding: 36px 0; color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); background: #fff; }
+    footer .row { display: flex; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
+    .back { position: fixed; left: 16px; bottom: 16px; background: var(--accent); color: #fff; padding: 8px 14px; border-radius: 8px; font-weight: 600; font-size: 13px; z-index: 100; }
+  </style>
+</head>
+<body>
+  <a class="back" href="/assets/previews/index.html">← К вариантам</a>
+
+  <header class="top">
+    <div class="container top-row">
+      <div class="logo">
+        <div class="mark">СТ</div>
+        <div>
+          <h1>СтройТехПроект</h1>
+          <small>Промышленные объекты под ключ</small>
+        </div>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="#lib">Библиотека</a></li>
+          <li><a href="#calc">Калькулятор</a></li>
+          <li><a href="#cab">Кабинет</a></li>
+          <li><a href="#mgr">Менеджеру</a></li>
+        </ul>
+      </nav>
+      <div class="actions">
+        <button class="btn ghost">Вход</button>
+        <button class="btn primary">Создать аккаунт</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="badge"><span class="dot"></span> Онлайн-расчёт за минуту</div>
+        <h2>Ангары и цеха с <span>понятной сметой</span> на старте</h2>
+        <p class="lead">Введите габариты и тип каркаса — получите предварительную стоимость и срок. Оформите заявку, и с вами свяжется оператор.</p>
+        <div class="hero-actions">
+          <button class="btn primary">К калькулятору</button>
+          <button class="btn ghost">Библиотека решений</button>
+        </div>
+        <div class="trust">
+          <div><b>120+</b> объектов</div>
+          <div><b>45</b> готовых решений</div>
+          <div><b>1 час</b> — ответ менеджера</div>
+        </div>
+      </div>
+
+      <div class="calc" id="calc">
+        <h3>Расчёт параметров объекта</h3>
+        <p class="sub">Предварительная оценка для понимания масштаба</p>
+
+        <div class="field">
+          <label>Тип объекта</label>
+          <select><option>Склад / ангар</option><option>Производственный цех</option><option>Техническое помещение</option></select>
+        </div>
+        <div class="field">
+          <label>Тип каркаса</label>
+          <select><option>ЛСТК</option><option>Металлоконструкции</option><option>Смешанный</option></select>
+        </div>
+        <div class="three">
+          <div class="field"><label>Длина, м</label><input class="input" value="50"></div>
+          <div class="field"><label>Ширина, м</label><input class="input" value="30"></div>
+          <div class="field"><label>Высота, м</label><input class="input" value="8"></div>
+        </div>
+        <div class="result">
+          <div><span>Площадь</span><b>1 500 м²</b></div>
+          <div><span>Стоимость</span><b class="price">12 750 000 ₽</b></div>
+          <div><span>Срок</span><b>4–5 мес</b></div>
+          <div><span>Материал</span><b>≈ 18 т</b></div>
+        </div>
+        <div class="actions-calc">
+          <button class="btn ghost">Обновить</button>
+          <button class="btn primary">Создать заявку</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block alt" id="lib">
+    <div class="container">
+      <div class="block-head">
+        <h2>Библиотека решений</h2>
+        <p>Готовые инженерные узлы: фундамент, каркас, кровля, стены. По каждому решению можно оставить заявку — оператор свяжется для уточнения.</p>
+      </div>
+      <div class="cards">
+        <div class="sol">
+          <div class="code">FND-001</div>
+          <h4>Свайно-ростверковый фундамент</h4>
+          <p>Для слабых грунтов, минимальные земляные работы.</p>
+          <div class="meta"><span>ЖБИ</span><span class="price">от 8 500 ₽/м²</span></div>
+          <button class="btn primary">Оставить заявку</button>
+        </div>
+        <div class="sol">
+          <div class="code">FRM-LSTK</div>
+          <h4>Каркас ЛСТК</h4>
+          <p>Быстрый монтаж, точность геометрии, лёгкий вес.</p>
+          <div class="meta"><span>Оцинк. сталь</span><span class="price">от 9 200 ₽/м²</span></div>
+          <button class="btn primary">Оставить заявку</button>
+        </div>
+        <div class="sol">
+          <div class="code">ROOF-SW</div>
+          <h4>Кровельные сэндвич-панели</h4>
+          <p>Теплоизоляция, быстрый монтаж.</p>
+          <div class="meta"><span>ППУ + сталь</span><span class="price">от 7 800 ₽/м²</span></div>
+          <button class="btn primary">Оставить заявку</button>
+        </div>
+        <div class="sol">
+          <div class="code">WALL-SIP</div>
+          <h4>Стеновая сэндвич-система</h4>
+          <p>Готовые утеплённые стеновые панели.</p>
+          <div class="meta"><span>Минвата + сталь</span><span class="price">от 6 400 ₽/м²</span></div>
+          <button class="btn primary">Оставить заявку</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="cab">
+    <div class="container">
+      <div class="block-head">
+        <h2>Личный кабинет клиента</h2>
+        <p>История заявок, статусы и комментарии менеджера — всё в одном окне.</p>
+      </div>
+      <div class="panel-box">
+        <div class="panel-head">
+          <h3>Мои заявки</h3>
+          <div class="chips">
+            <span class="chip active">Все</span>
+            <span class="chip">В работе</span>
+            <span class="chip">Завершённые</span>
+          </div>
+        </div>
+        <table>
+          <thead><tr><th>№</th><th>Объект</th><th>Статус</th><th>Источник</th><th>Создана</th><th>Комментарий менеджера</th></tr></thead>
+          <tbody>
+            <tr><td>#1042</td><td>Склад 50×30</td><td><span class="status progress">в работе</span></td><td class="sm">Калькулятор</td><td class="sm">20.04.2026 14:12</td><td>Уточняем по фундаменту</td></tr>
+            <tr><td>#1039</td><td>Производственный цех</td><td><span class="status new">новая</span></td><td class="sm">Калькулятор</td><td class="sm">19.04.2026 10:40</td><td>—</td></tr>
+            <tr><td>#1031</td><td>Кровля ROOF-SW</td><td><span class="status done">завершена</span></td><td class="sm">Библиотека</td><td class="sm">05.04.2026 09:05</td><td>КП отправлено, клиент согласовал</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="block alt" id="mgr">
+    <div class="container">
+      <div class="block-head">
+        <h2>Панель менеджера</h2>
+        <p>Входящие заявки, быстрая смена статуса, комментарий для клиента.</p>
+      </div>
+      <div class="panel-box">
+        <div class="panel-head">
+          <h3>Входящие заявки</h3>
+          <div class="chips">
+            <span class="chip">Всего: 27</span>
+            <span class="chip">Новые: 6</span>
+            <span class="chip">В работе: 12</span>
+            <span class="chip">Завершено: 7</span>
+          </div>
+        </div>
+        <table>
+          <thead><tr><th>ID</th><th>Клиент</th><th>Статус</th><th>Источник</th><th>Создана</th><th>Заметка менеджера</th><th>Действие</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>#1042</td>
+              <td>Иванов И.<br><span class="sm">ivanov@mail.ru · +7 900 000 00 01</span></td>
+              <td><span class="status progress">в работе</span></td>
+              <td class="sm">Калькулятор</td>
+              <td class="sm">20.04 14:12</td>
+              <td><input class="input" value="Уточняем фундамент"></td>
+              <td><select class="mini"><option>new</option><option selected>in_progress</option><option>done</option><option>cancelled</option></select></td>
+            </tr>
+            <tr>
+              <td>#1039</td>
+              <td>ООО «СтройГрупп»<br><span class="sm">info@sg.ru · +7 495 500 00 02</span></td>
+              <td><span class="status new">новая</span></td>
+              <td class="sm">Калькулятор</td>
+              <td class="sm">19.04 10:40</td>
+              <td><input class="input" placeholder="Комментарий…"></td>
+              <td><select class="mini"><option selected>new</option><option>in_progress</option><option>done</option><option>cancelled</option></select></td>
+            </tr>
+            <tr>
+              <td>#1031</td>
+              <td>Петров П.<br><span class="sm">petrov@mail.ru · +7 900 000 00 03</span></td>
+              <td><span class="status done">завершена</span></td>
+              <td class="sm">Библиотека</td>
+              <td class="sm">05.04 09:05</td>
+              <td><input class="input" value="Клиент согласовал"></td>
+              <td><select class="mini"><option>new</option><option>in_progress</option><option selected>done</option><option>cancelled</option></select></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container row">
+      <div>© СтройТехПроект · промышленные объекты под ключ</div>
+      <div>+7 (495) 123-45-67 · <a href="#">info@stroytechproekt.ru</a></div>
+    </div>
+  </footer>
+</body>
+</html>
