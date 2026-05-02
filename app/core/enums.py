@@ -18,3 +18,22 @@ class RequestStatus(StrEnum):
 class RequestSource(StrEnum):
     CALCULATOR = "calculator"
     LIBRARY = "library"
+
+
+class ObjectType(StrEnum):
+    WAREHOUSE = "warehouse"
+    PRODUCTION = "production"
+    TECHNICAL = "technical"
+
+
+class FrameType(StrEnum):
+    LSTK = "lstk"
+    STEEL = "steel"
+    MIXED = "mixed"
+
+
+class CostUnit(StrEnum):
+    SQM = "м²"
+    PIECE = "шт"
+    METER = "м"
+    TON = "т"

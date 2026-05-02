@@ -2,20 +2,19 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
-from app.core.enums import RequestSource, RequestStatus
+from app.core.enums import FrameType, ObjectType, RequestSource, RequestStatus
 from app.schemas.user import UserPublic
 
 
 class GuestCalculatorRequestCreate(BaseModel):
-    """Заявка с калькулятора без регистрации: контакт + те же параметры, что у /calculate."""
 
     full_name: str = Field(..., min_length=1, max_length=255)
     phone: str = Field(..., min_length=5, max_length=40)
     length: float
     width: float
     height: float
-    object_type: str | None = None
-    frame_type: str | None = None
+    object_type: ObjectType | None = None
+    frame_type: FrameType | None = None
     comment: str | None = Field(None, max_length=4000)
 
 

@@ -1,14 +1,15 @@
 from pydantic import BaseModel
 
 from app.core.config import settings
+from app.core.enums import FrameType, ObjectType
 
 
 class CalcInput(BaseModel):
     length: float
     width: float
     height: float
-    object_type: str | None = None
-    frame_type: str | None = None
+    object_type: ObjectType | None = None
+    frame_type: FrameType | None = None
 
 
 class CalcResult(BaseModel):
@@ -20,9 +21,9 @@ class CalcResult(BaseModel):
 
 
 FRAME_MULTIPLIER = {
-    "lstk": 1.0,
-    "steel": 1.08,
-    "mixed": 1.05,
+    FrameType.LSTK: 1.0,
+    FrameType.STEEL: 1.08,
+    FrameType.MIXED: 1.05,
 }
 
 
@@ -34,8 +35,8 @@ def estimate_calc(inp: CalcInput) -> CalcResult:
     area = length * width
     volume = length * width * height
 
-    frame_key = (inp.frame_type or "lstk").lower()
-    mult = FRAME_MULTIPLIER.get(frame_key, 1.0)
+    frame = inp.frame_type or FrameType.LSTK
+    mult = FRAME_MULTIPLIER.get(frame, 1.0)
 
     price = settings.calc_price_per_sqm * mult
     estimated_cost = int(round(area * price))
