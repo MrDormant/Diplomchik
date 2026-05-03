@@ -6,9 +6,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.api.v1.router import api_router
 from app.core.config import settings
-from app.db.database import Base, engine
-from app.db.schema_patches import apply_schema_patches
-import app.models  # noqa: F401 — регистрация моделей для metadata.create_all
+import app.models  # noqa: F401 — регистрация моделей для Alembic / связей ORM
 
 
 app = FastAPI(
@@ -79,7 +77,3 @@ async def previews_page():
     return {"detail": "previews/index.html not found"}
 
 
-@app.on_event("startup")
-def on_startup():
-    Base.metadata.create_all(bind=engine)
-    apply_schema_patches(engine)

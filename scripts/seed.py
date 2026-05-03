@@ -11,8 +11,8 @@ sys.path.insert(0, str(ROOT))
 
 from sqlalchemy.orm import Session  # noqa: E402
 
-from app.db.database import SessionLocal, engine, Base  # noqa: E402
-from app.db.schema_patches import apply_schema_patches  # noqa: E402
+from app.db.database import SessionLocal  # noqa: E402
+from app.db.migrate import upgrade_head  # noqa: E402
 import app.models  # noqa: F401, E402
 from app.core.enums import UserRole  # noqa: E402
 from app.core.security import hash_password  # noqa: E402
@@ -24,8 +24,7 @@ DEFAULT_COVER_IMAGE = "/assets/library-covers/ALUDAR.jpg"
 
 
 def seed() -> None:
-    Base.metadata.create_all(bind=engine)
-    apply_schema_patches(engine)
+    upgrade_head()
     db: Session = SessionLocal()
     try:
         if db.query(SolutionCategory).count() == 0:
