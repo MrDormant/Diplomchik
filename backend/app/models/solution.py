@@ -51,7 +51,6 @@ class Solution(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, nullable=True)
     cover_image = Column(String(512), nullable=True)
-    testovoe_pole = Column(String(500), nullable=True)
 
     category = relationship("SolutionCategory", back_populates="solutions")
     files = relationship("SolutionFile", back_populates="solution", cascade="all, delete-orphan")

@@ -382,7 +382,7 @@ select.mini { padding: 5px 8px; font-size: 12px; border-radius: 3px; }
   font-size: 13px; color: var(--muted); margin: -6px 0 14px;
   line-height: 1.5;
 }
-#company, #calc, #contacts {
+#company, #calc {
   scroll-margin-top: 88px;
 }
 .company-section {

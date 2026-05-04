@@ -23,9 +23,10 @@ from app.services import admin_service
 
 router = APIRouter()
 
-_APP_DIR = Path(__file__).resolve().parents[3]
-_COVER_DIR = _APP_DIR / "static" / "library-covers"
-_SHOWCASE_DIR = _APP_DIR / "static" / "showcase-covers"
+_PROJECT_ROOT = Path(__file__).resolve().parents[5]
+_FRONTEND_DIR = _PROJECT_ROOT / "frontend"
+_COVER_DIR = _FRONTEND_DIR / "library-covers"
+_SHOWCASE_DIR = _FRONTEND_DIR / "showcase-covers"
 _ALLOWED_COVER_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
 _SLUG_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 

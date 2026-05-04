@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Личный кабинет — СтройТехПроект</title>
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="container top-row">
+      <a href="/" class="logo-link" aria-label="Главная страница">
+        <div class="logo">
+          <div class="mark">СТ</div>
+          <div>
+            <h1>СтройТехПроект</h1>
+            <small>Инжиниринг промышленных объектов</small>
+          </div>
+        </div>
+      </a>
+      <nav class="site-nav" aria-label="Разделы сайта">
+        <ul>
+          <li><a href="/#company" class="site-nav-link" data-nav="company">Главная</a></li>
+          <li class="has-submenu">
+            <span class="site-nav-link site-nav-label" data-nav="library" aria-haspopup="true">Библиотека</span>
+            <ul class="submenu" role="menu">
+              <li><a href="/library.html" data-nav="library">Виды работ</a></li>
+              <li><a href="/projects.html" data-nav="projects">Готовые проекты</a></li>
+            </ul>
+          </li>
+          <li><a href="/calculator.html" class="site-nav-link" data-nav="calc">Расчёт</a></li>
+        </ul>
+      </nav>
+      <div class="actions">
+        <a id="managerTel" class="btn call" href="tel:+74951234567">+7 (495) 123-45-67</a>
+        <button class="btn ghost" id="btnLogout" type="button">Выйти</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="block">
+    <div class="container">
+      <p id="msg" class="lead" style="color:var(--muted);"></p>
+
+      <div id="clientPanel" style="display:none;">
+        <div class="block-head">
+          <h2>Мои заявки</h2>
+          <span class="code">USR · история заявок</span>
+        </div>
+        <div class="panel-box" id="tbl" style="display:none;">
+          <div class="panel-head">
+            <h3>История обращений</h3>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>№</th>
+                <th>Статус</th>
+                <th>Источник</th>
+                <th>Создана</th>
+                <th>Комментарий менеджера</th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="staffPanel" style="display:none;">
+        <div class="block-head">
+          <h2>Кабинет менеджера</h2>
+          <span class="code">STAFF</span>
+        </div>
+        <p class="lead" style="margin-bottom: 20px;">
+          Обработка заявок — в отдельной панели (там же смена статусов и заметки).
+          <a class="btn primary" href="/admin.html" style="margin-left:8px;">Все заявки</a>
+        </p>
+
+        <div class="panel-box" style="margin-bottom: 24px;">
+          <div class="panel-head">
+            <h3>Пользователи</h3>
+          </div>
+          <div style="padding: 0; overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Имя</th>
+                  <th>Email</th>
+                  <th>Телефон</th>
+                  <th>Роль</th>
+                  <th>Регистрация</th>
+                </tr>
+              </thead>
+              <tbody id="staffUsersBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel-box" style="margin-bottom: 24px;">
+          <div class="panel-head">
+            <h3>Добавить решение в каталог</h3>
+          </div>
+          <div style="padding: 18px;">
+            <p class="muted" style="font-size:13px; margin-bottom:14px;">Slug — латиница и дефисы, например <code>my-solution</code>. Удаление снимает решение с сайта (публикация отключена).</p>
+            <div class="three" style="margin-bottom: 12px;">
+              <div class="field" style="margin-bottom:0;">
+                <label>Категория</label>
+                <select id="staffCat" class="input"></select>
+              </div>
+              <div class="field" style="margin-bottom:0;">
+                <label>Название</label>
+                <input class="input" id="staffName" type="text" placeholder="Название">
+              </div>
+              <div class="field" style="margin-bottom:0;">
+                <label>Slug</label>
+                <input class="input mono" id="staffSlug" type="text" placeholder="latin-slug">
+              </div>
+            </div>
+            <div class="three" style="margin-bottom: 12px;">
+              <div class="field" style="margin-bottom:0;">
+                <label>Код (необяз.)</label>
+                <input class="input mono" id="staffCode" type="text" placeholder="FND-002">
+              </div>
+              <div class="field" style="margin-bottom:0;">
+                <label>Материал, ₽</label>
+                <input class="input mono" id="staffMat" type="number" min="0" step="1" value="0">
+              </div>
+              <div class="field" style="margin-bottom:0;">
+                <label>Работы, ₽</label>
+                <input class="input mono" id="staffWork" type="number" min="0" step="1" value="0">
+              </div>
+            </div>
+            <div class="field" style="margin-bottom: 12px;">
+              <label>Краткое описание</label>
+              <input class="input" id="staffShort" type="text" placeholder="Одна строка для карточки">
+            </div>
+            <div class="field" style="margin-bottom: 12px;">
+              <label>Тип материала</label>
+              <input class="input" id="staffMatType" type="text" placeholder="ЖБИ, сталь…">
+            </div>
+            <div class="field" style="margin-bottom: 12px;">
+              <label>Обложка</label>
+              <input class="input" id="staffCover" type="file" accept="image/*">
+            </div>
+            <div class="field" style="margin-bottom: 12px;">
+              <label><input type="checkbox" id="staffFeatured"> Избранное на сайте</label>
+            </div>
+            <button type="button" class="btn primary" id="btnAddSolution">Добавить в каталог</button>
+            <span id="staffSolMsg" class="msg" style="display:inline-block;margin-left:12px;"></span>
+          </div>
+        </div>
+
+        <div class="panel-box" style="margin-bottom: 24px;">
+          <div class="panel-head">
+            <h3>Все решения</h3>
+          </div>
+          <div style="padding: 0; overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Код</th>
+                  <th>Название</th>
+                  <th>Категория</th>
+                  <th>На сайте</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="staffSolBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel-box" style="margin-bottom: 24px;">
+          <div class="panel-head">
+            <h3>Добавить готовый проект</h3>
+          </div>
+          <div style="padding: 18px;">
+            <p class="muted" style="font-size:13px; margin-bottom:14px;">Готовый проект отображается на вкладке «Готовые проекты» в библиотеке. Удаление снимает проект с публикации.</p>
+            <div class="field" style="margin-bottom: 12px;">
+              <label>Название</label>
+              <input class="input" id="showName" type="text" placeholder="Например: Ангар 18×36 м">
+            </div>
+            <div class="field" style="margin-bottom: 12px;">
+              <label>Описание</label>
+              <textarea id="showDesc" placeholder="Что построено, какие материалы, особенности"></textarea>
+            </div>
+            <div class="three" style="margin-bottom: 12px;">
+              <div class="field" style="margin-bottom:0;">
+                <label>Адрес</label>
+                <input class="input" id="showAddr" type="text" placeholder="г. Москва, ул. ...">
+              </div>
+              <div class="field" style="margin-bottom:0;">
+                <label>Стоимость, ₽</label>
+                <input class="input mono" id="showCost" type="number" min="0" step="1" placeholder="0">
+              </div>
+              <div class="field" style="margin-bottom:0;">
+                <label>Обложка</label>
+                <input class="input" id="showCover" type="file" accept="image/*">
+              </div>
+            </div>
+            <button type="button" class="btn primary" id="btnAddShowcase">Добавить проект</button>
+            <span id="showMsg" class="msg" style="display:inline-block;margin-left:12px;"></span>
+          </div>
+        </div>
+
+        <div class="panel-box">
+          <div class="panel-head">
+            <h3>Все готовые проекты</h3>
+          </div>
+          <div style="padding: 0; overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Название</th>
+                  <th>Адрес</th>
+                  <th>Стоимость</th>
+                  <th>На сайте</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="showBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container row">
+      <div>© СтройТехПроект</div>
+      <div class="mono">+7 (495) 123-45-67 · <a href="mailto:info@stroytechproekt.ru">info@stroytechproekt.ru</a></div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/cabinet.js"></script>
+  <script src="/assets/js/site-nav.js"></script>
+</body>
+</html>

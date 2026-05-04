@@ -1,5 +1,5 @@
 /**
- * Подсветка активного пункта шапки: О компании / Библиотека / Расчёт / Контакты
+ * Подсветка активного пункта шапки: О компании / Библиотека / Расчёт.
  */
 (function () {
   function applyActiveNav() {
@@ -14,8 +14,7 @@
     else if (path.indexOf('projects.html') !== -1) key = 'library';
     else if (path.indexOf('calculator.html') !== -1) key = 'calc';
     else if (path === '/' || path === '' || path.endsWith('/')) {
-      if (hash === '#contacts') key = 'contacts';
-      else if (hash === '#calc') key = 'calc';
+      if (hash === '#calc') key = 'calc';
       else key = 'company';
     }
 

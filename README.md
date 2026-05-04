@@ -13,7 +13,7 @@ docker compose up --build
 После старта PostgreSQL и API выполните загрузку тестовых данных (категории, решения, учётные записи менеджера и администратора):
 
 ```bash
-docker compose exec api python scripts/seed.py
+docker compose exec api python backend/scripts/seed.py
 ```
 
 - Сайт: http://localhost:8000/
@@ -32,19 +32,19 @@ docker compose exec api python scripts/seed.py
 1. Установите зависимости: `pip install -r requirements.txt`
 2. Поднимите PostgreSQL и при необходимости Mailpit (или укажите реальный SMTP в `.env`).
 3. Скопируйте `.env.example` в `.env` и задайте `DATABASE_URL` (логин, пароль и имя БД должны совпадать с тем, что настроено в PostgreSQL).
-4. Создайте схему и (по желанию) тестовые данные: `python scripts/seed.py` (внутри скрипта вызывается `alembic upgrade head`). Либо отдельно: `alembic upgrade head`, затем `python scripts/seed.py`.
-5. `uvicorn app.main:app --reload`
+4. Создайте схему и (по желанию) тестовые данные: `python backend/scripts/seed.py` (внутри скрипта вызывается Alembic). Либо отдельно: `alembic -c backend/alembic.ini upgrade head`, затем `python backend/scripts/seed.py`.
+5. `uvicorn app.main:app --reload --app-dir backend`
 
 ## Миграции (Alembic)
 
-Схему БД версионируют файлы в `alembic/versions/`. Полезные команды из **корня проекта** (тот же `DATABASE_URL`, что в `.env`):
+Схему БД версионируют файлы в `backend/alembic/versions/`. Полезные команды из **корня проекта** (тот же `DATABASE_URL`, что в `.env`):
 
 | Команда | Назначение |
 |--------|------------|
-| `alembic upgrade head` | Накатить все неприменённые миграции |
-| `alembic downgrade -1` | Откатить последнюю миграцию |
-| `alembic current` | Какая ревизия записана в БД |
-| `alembic revision --autogenerate -m "описание"` | Черновик миграции по diff моделей и БД (обязательно проверить файл вручную) |
+| `alembic -c backend/alembic.ini upgrade head` | Накатить все неприменённые миграции |
+| `alembic -c backend/alembic.ini downgrade -1` | Откатить последнюю миграцию |
+| `alembic -c backend/alembic.ini current` | Какая ревизия записана в БД |
+| `alembic -c backend/alembic.ini revision --autogenerate -m "описание"` | Черновик миграции по diff моделей и БД (обязательно проверить файл вручную) |
 
 После смены моделей: сгенерировать ревизию, просмотреть `upgrade()`/`downgrade()`, выполнить `alembic upgrade head`. Первую ревизию `initial schema` в этом проекте создаёт таблицы через `Base.metadata.create_all` внутри миграции; следующие изменения схемы — отдельные ревизии (часто через `--autogenerate` при уже актуальной БД).
 
@@ -56,12 +56,15 @@ docker compose exec api python scripts/seed.py
 
 Проект специально оставлен **простым и учебным**: это один `FastAPI`-монолит с HTML-страницами и PostgreSQL.
 
-- `app/api/v1/endpoints/` — HTTP-роуты. Здесь только приём запросов и возврат ответов.
-- `app/services/` — бизнес-логика сценариев. Например, создание заявки и уведомление оператора.
-- `app/crud/` — простая работа с базой данных.
-- `app/models/` — SQLAlchemy-модели таблиц.
-- `app/schemas/` — Pydantic-схемы запросов и ответов.
-- `app/static/` — простые HTML-страницы сайта, кабинета и панели менеджера.
+- `backend/app/api/v1/endpoints/` — HTTP-роуты. Здесь только приём запросов и возврат ответов.
+- `backend/app/services/` — бизнес-логика сценариев. Например, создание заявки и уведомление оператора.
+- `backend/app/crud/` — простая работа с базой данных.
+- `backend/app/models/` — SQLAlchemy-модели таблиц.
+- `backend/app/schemas/` — Pydantic-схемы запросов и ответов.
+- `frontend/html/` — HTML-страницы сайта, кабинета и панели менеджера.
+- `frontend/css/` — стили.
+- `frontend/js/` — клиентские скрипты страниц и общей шапки.
+- `frontend/library-covers/` и `frontend/showcase-covers/` — изображения карточек.
 
 Такое разделение полезно для обучения: проще видеть, где находится логика сайта, где логика БД, а где бизнес-процесс.
 
@@ -83,7 +86,7 @@ docker compose exec api python scripts/seed.py
 
 ### Если таблицы создавались по старой схеме (ошибки вроде «нет столбца …»)
 
-Отдельные миграции не исправляют «по памяти» старый мусор в БД. Проще **пересоздать схему** (данные пропадут), затем снова `alembic upgrade head` и `python scripts/seed.py`.
+Отдельные миграции не исправляют «по памяти» старый мусор в БД. Проще **пересоздать схему** (данные пропадут), затем снова `alembic -c backend/alembic.ini upgrade head` и `python backend/scripts/seed.py`.
 
 **Вариант А — очистить схему `public` в текущей БД** (удобно, если БД уже называется `construction_db`):
 
@@ -98,7 +101,7 @@ docker compose exec api python scripts/seed.py
    GRANT ALL ON SCHEMA public TO public;
    ```
 4. Выйдите: `\q`
-5. Снова из корня проекта: `python scripts/seed.py` — таблицы создадутся заново вместе с актуальной структурой.
+5. Снова из корня проекта: `python backend/scripts/seed.py` — таблицы создадутся заново вместе с актуальной структурой.
 
 **Вариант Б — удалить и создать базу целиком** (если удобнее начать «с чистого листа»):
 
@@ -108,7 +111,7 @@ docker compose exec api python scripts/seed.py
    DROP DATABASE IF EXISTS construction_db;
    CREATE DATABASE construction_db;
    ```
-3. `\q`, затем `python scripts/seed.py`.
+3. `\q`, затем `python backend/scripts/seed.py`.
 
 ## Сценарий проверки (тест)
 

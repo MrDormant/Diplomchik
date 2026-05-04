@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Расчёт — СтройТехПроект</title>
-  <link rel="stylesheet" href="/assets/style.css">
+  <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
   <header class="top">
@@ -29,7 +29,6 @@
             </ul>
           </li>
           <li><a href="/calculator.html" class="site-nav-link" data-nav="calc">Расчёт</a></li>
-          <li><a href="/#contacts" class="site-nav-link" data-nav="contacts">Контакты</a></li>
         </ul>
       </nav>
       <div class="actions">
@@ -69,7 +68,7 @@
     </div>
   </section>
 
-  <footer id="contacts">
+  <footer>
     <div class="container row">
       <div>© СтройТехПроект · инжиниринг промышленных объектов</div>
       <div class="mono">
@@ -79,25 +78,8 @@
     </div>
   </footer>
 
-  <script>
-    const API = '/api/v1';
-    async function loadPublicConfig() {
-      try {
-        const r = await fetch(API + '/public/config');
-        const j = await r.json();
-        const tel = j.manager_phone || '+74951234567';
-        const href = j.manager_phone_tel || ('tel:' + tel.replace(/[^+0-9]/g, ''));
-        const mgr = document.getElementById('managerTel');
-        mgr.href = href;
-        mgr.textContent = tel;
-        const ft = document.getElementById('footerTel');
-        ft.href = href;
-        ft.textContent = tel;
-      } catch (e) { console.warn(e); }
-    }
-    loadPublicConfig();
-  </script>
-  <script src="/assets/site-nav.js"></script>
-  <script src="/assets/site-header-public-auth.js"></script>
+  <script src="/assets/js/calculator.js"></script>
+  <script src="/assets/js/site-nav.js"></script>
+  <script src="/assets/js/site-header-public-auth.js"></script>
 </body>
 </html>

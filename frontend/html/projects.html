@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Готовые проекты — СтройТехПроект</title>
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="container top-row">
+      <a href="/" class="logo-link" aria-label="Главная страница">
+        <div class="logo">
+          <div class="mark">СТ</div>
+          <div>
+            <h1>СтройТехПроект</h1>
+            <small>Инжиниринг промышленных объектов</small>
+          </div>
+        </div>
+      </a>
+      <nav class="site-nav" aria-label="Разделы сайта">
+        <ul>
+          <li><a href="/#company" class="site-nav-link" data-nav="company">Главная</a></li>
+          <li class="has-submenu">
+            <span class="site-nav-link site-nav-label" data-nav="library" aria-haspopup="true">Библиотека</span>
+            <ul class="submenu" role="menu">
+              <li><a href="/library.html" data-nav="library">Виды работ</a></li>
+              <li><a href="/projects.html" data-nav="projects">Готовые проекты</a></li>
+            </ul>
+          </li>
+          <li><a href="/calculator.html" class="site-nav-link" data-nav="calc">Расчёт</a></li>
+        </ul>
+      </nav>
+      <div class="actions">
+        <a id="managerTel" class="btn call" href="tel:+74951234567">+7 (495) 123-45-67</a>
+        <a id="hdrLogin" class="btn ghost" href="/?openLogin=1">Вход</a>
+        <a id="hdrRegister" class="btn primary" href="/?openRegister=1">Регистрация</a>
+        <a id="linkCabinet" class="btn ghost" href="/cabinet.html" style="display:none;">Кабинет</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="block">
+    <div class="container">
+      <div class="block-head">
+        <h2>Готовые проекты</h2>
+        <span class="code">PROJECTS · реализованные</span>
+      </div>
+      <p id="load" class="lead" style="color:var(--muted);">Загрузка проектов…</p>
+      <div class="cards" id="grid"></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container row">
+      <div>© СтройТехПроект · реализованные объекты</div>
+      <div class="mono">+7 (495) 123-45-67 · <a href="mailto:info@stroytechproekt.ru">info@stroytechproekt.ru</a></div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/projects.js"></script>
+  <script src="/assets/js/site-nav.js"></script>
+  <script src="/assets/js/site-header-public-auth.js"></script>
+</body>
+</html>
