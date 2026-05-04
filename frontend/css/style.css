@@ -19,6 +19,15 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+/*
+ * Sticky footer: grid row 1fr needs a definite height on the grid container.
+ * Only min-height on body leaves height "auto" → 1fr collapses and the footer
+ * sits under the content with empty background below (see library.html).
+ */
+html {
+  height: 100%;
+}
+
 body {
   font-family: 'Segoe UI', Tahoma, sans-serif;
   background:
@@ -28,7 +37,16 @@ body {
   background-blend-mode: normal, multiply, multiply;
   color: var(--text);
   line-height: 1.55;
+  min-height: 100%;
   min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+/* Средняя зона grid: шапка и подвал — auto, контент забирает оставшуюся высоту окна */
+.page-main {
+  min-width: 0;
+  min-height: 0;
 }
 
 .mono { font-family: 'JetBrains Mono', 'Consolas', 'Courier New', monospace; }
