@@ -113,6 +113,9 @@ nav a:hover { color: var(--navy); }
 .has-submenu:hover > .site-nav-label {
   color: var(--navy);
 }
+.mobile-menu-toggle {
+  display: none;
+}
 .has-submenu { position: relative; }
 .has-submenu > .site-nav-link::after {
   content: '▾'; margin-left: 6px; font-size: 10px; color: var(--muted);
@@ -581,3 +584,384 @@ footer .row {
 /* === UTILS === */
 .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
 .hidden { display: none !important; }
+
+/* === SMALL PHONE ADAPTATION (360 × 568) === */
+@media (max-width: 480px) {
+  body {
+    font-size: 14px;
+    line-height: 1.45;
+    background-size: auto, 32px 32px, 32px 32px;
+  }
+
+  .container {
+    max-width: none;
+    padding: 0 12px;
+  }
+
+  header.top {
+    position: static;
+  }
+
+  .top-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    padding: 10px 0;
+    align-items: center;
+  }
+
+  .logo {
+    gap: 9px;
+  }
+
+  .logo .mark {
+    width: 36px;
+    height: 36px;
+    font-size: 13px;
+  }
+
+  .logo h1 {
+    font-size: 15px;
+  }
+
+  .logo small {
+    font-size: 9px;
+    letter-spacing: 1px;
+  }
+
+  .mobile-menu-toggle {
+    width: 42px;
+    height: 38px;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+  }
+
+  .mobile-menu-toggle span {
+    width: 20px;
+    height: 2px;
+    display: block;
+    background: var(--navy);
+    border-radius: 2px;
+    transition: transform .15s, opacity .15s;
+  }
+
+  .mobile-menu-toggle[aria-expanded="true"] span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .mobile-menu-toggle[aria-expanded="true"] span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .mobile-menu-toggle[aria-expanded="true"] span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  .site-nav,
+  .actions {
+    display: none;
+    grid-column: 1 / -1;
+  }
+
+  .mobile-menu-open .site-nav,
+  .mobile-menu-open .actions {
+    display: block;
+  }
+
+  .site-nav ul,
+  nav ul {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+    padding: 10px 0 2px;
+    border-top: 1px solid var(--line);
+  }
+
+  .site-nav-link,
+  nav a,
+  .site-nav-label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: .6px;
+    padding: 9px 0;
+  }
+
+  .has-submenu > .site-nav-link::after {
+    content: '';
+  }
+
+  .submenu {
+    display: flex;
+    position: static;
+    min-width: 0;
+    margin: 0 0 4px 12px;
+    padding: 0 0 0 10px;
+    box-shadow: none;
+    border: none;
+    border-left: 2px solid var(--cyan-soft);
+    border-radius: 0;
+  }
+
+  .submenu a {
+    padding: 7px 0;
+    white-space: normal;
+  }
+
+  .actions {
+    width: 100%;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--line);
+  }
+
+  .mobile-menu-open .actions {
+    display: grid;
+  }
+
+  .actions .btn,
+  .actions a.btn {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .actions .btn.call {
+    grid-column: 1 / -1;
+  }
+
+  .btn {
+    padding: 9px 10px;
+    font-size: 11px;
+    letter-spacing: .2px;
+  }
+
+  .company-section {
+    padding: 28px 0 0;
+  }
+
+  .company-prose {
+    padding: 18px 16px;
+  }
+
+  .hero,
+  section.block {
+    padding: 32px 0;
+  }
+
+  .hero-grid {
+    gap: 22px;
+  }
+
+  .hero h2 {
+    font-size: 28px;
+    line-height: 1.15;
+  }
+
+  .hero p.lead,
+  p.lead {
+    font-size: 14px;
+  }
+
+  .spec-list,
+  .three,
+  .result,
+  .actions-calc {
+    grid-template-columns: 1fr;
+  }
+
+  .spec {
+    padding: 10px 12px;
+  }
+
+  .calc {
+    padding: 20px 14px 16px;
+  }
+
+  .calc .label-top,
+  .modal .label-top {
+    left: 12px;
+    letter-spacing: 1.2px;
+  }
+
+  .block-head {
+    display: block;
+    margin-bottom: 18px;
+  }
+
+  .block-head h2 {
+    font-size: 22px;
+  }
+
+  .block-head .code {
+    display: block;
+    margin-top: 6px;
+    font-size: 10px;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .sol {
+    padding: 16px;
+  }
+
+  .solution-cover {
+    height: 130px;
+  }
+
+  .panel-box {
+    overflow-x: auto;
+  }
+
+  table {
+    min-width: 680px;
+    font-size: 12px;
+  }
+
+  th,
+  td {
+    padding: 9px 10px;
+  }
+
+  .panel-head {
+    padding: 10px 12px;
+  }
+
+  .panel-head h3 {
+    font-size: 12px;
+    letter-spacing: 1.2px;
+  }
+
+  .admin-page {
+    padding-top: 20px;
+  }
+
+  .admin-layout {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .admin-sidebar {
+    position: static;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+    padding: 10px;
+  }
+
+  .admin-sidebar-title {
+    padding: 4px 2px 6px;
+  }
+
+  .admin-nav-btn {
+    padding: 10px;
+  }
+
+  .admin-nav-btn + .admin-nav-btn {
+    margin-top: 0;
+  }
+
+  .admin-nav-btn span {
+    font-size: 12px;
+  }
+
+  .admin-nav-btn small {
+    font-size: 11px;
+  }
+
+  .admin-section-head {
+    display: block;
+    padding: 16px 14px;
+  }
+
+  .admin-section-head h3 {
+    font-size: 20px;
+  }
+
+  .admin-section-head .btn {
+    width: 100%;
+    margin-top: 12px;
+  }
+
+  .admin-actions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-action-card {
+    min-height: 0;
+    padding: 16px;
+  }
+
+  .modal-bg {
+    align-items: flex-start;
+    overflow-y: auto;
+    padding: 12px;
+  }
+
+  .modal {
+    max-width: 100%;
+    padding: 20px 14px 16px;
+    margin: 18px 0;
+  }
+
+  .modal .row {
+    flex-direction: column;
+  }
+
+  .modal .row .btn {
+    width: 100%;
+  }
+
+  footer {
+    margin-top: 24px;
+    padding: 20px 0;
+  }
+
+  footer .row {
+    display: grid;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 380px) {
+  .container {
+    padding: 0 10px;
+  }
+
+  .actions {
+    grid-template-columns: 1fr;
+  }
+
+  .actions .btn.call {
+    grid-column: auto;
+  }
+
+  .hero h2 {
+    font-size: 25px;
+  }
+
+  .calc,
+  .company-prose,
+  .admin-section-head,
+  .admin-action-card {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .input,
+  select,
+  textarea {
+    font-size: 13px;
+    padding: 9px 10px;
+  }
+}
