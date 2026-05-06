@@ -39,59 +39,287 @@
   </header>
 
   <main class="page-main">
-  <section class="block">
-    <div class="container">
-      <div class="block-head">
-        <h2>Обработка заявок</h2>
-        <span class="code">MGR · входящие</span>
-      </div>
-
-      <div class="panel-box" style="margin-bottom:24px;">
-        <div class="panel-head">
-          <h3>Авторизация менеджера</h3>
+    <section class="block admin-page">
+      <div class="container">
+        <div class="block-head">
+          <h2>Панель менеджера</h2>
+          <span class="code">ADMIN</span>
         </div>
-        <div style="padding:16px 18px; display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;">
-          <div class="field" style="margin:0; min-width:220px;">
-            <label>Email</label>
-            <input class="input" type="email" id="email" placeholder="manager@test.local" value="manager@test.local">
+
+        <div class="panel-box" style="margin-bottom:24px;">
+          <div class="panel-head">
+            <h3>Авторизация менеджера</h3>
           </div>
-          <div class="field" style="margin:0; min-width:160px;">
-            <label>Пароль</label>
-            <input class="input" type="password" id="pass" placeholder="Пароль" value="manager123">
+          <div style="padding:16px 18px; display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;">
+            <div class="field" style="margin:0; min-width:220px;">
+              <label>Email</label>
+              <input class="input" type="email" id="email" placeholder="manager@test.local" value="manager@test.local">
+            </div>
+            <div class="field" style="margin:0; min-width:160px;">
+              <label>Пароль</label>
+              <input class="input" type="password" id="pass" placeholder="Пароль" value="manager123">
+            </div>
+            <button type="button" class="btn primary" id="btnLogin">Войти</button>
+            <div style="flex:1; min-width:240px; font-size:12px; color:var(--muted);">
+              Тестовые учётные данные после <code>seed.py</code>. Письма о заявках — в
+              <a href="http://localhost:8025" target="_blank" rel="noopener">Mailpit</a>.
+            </div>
           </div>
-          <button type="button" class="btn primary" id="btnLogin">Войти</button>
-          <div style="flex:1; min-width:240px; font-size:12px; color:var(--muted);">
-            Тестовые учётные данные после <code>seed.py</code>. Письма о заявках — в
-            <a href="http://localhost:8025" target="_blank" rel="noopener">Mailpit</a>.
+        </div>
+
+        <p id="msg" class="lead" style="color:var(--danger);"></p>
+
+        <div class="admin-layout">
+          <aside class="admin-sidebar" aria-label="Разделы панели">
+            <div class="admin-sidebar-title">Разделы</div>
+            <button class="admin-nav-btn active" type="button" data-section="requests">
+              <span>Заявки клиентов</span>
+              <small>статусы и заметки</small>
+            </button>
+            <button class="admin-nav-btn" type="button" data-section="summary">
+              <span>Сводка</span>
+              <small>количество по статусам</small>
+            </button>
+            <button class="admin-nav-btn" type="button" data-section="users">
+              <span>Пользователи</span>
+              <small>клиенты и роли</small>
+            </button>
+            <button class="admin-nav-btn" type="button" data-section="solutions">
+              <span>Каталог решений</span>
+              <small>публикация и карточки</small>
+            </button>
+            <button class="admin-nav-btn" type="button" data-section="showcase">
+              <span>Готовые проекты</span>
+              <small>витрина объектов</small>
+            </button>
+          </aside>
+
+          <div class="admin-content">
+            <section class="admin-section active" id="admin-section-requests">
+              <div class="admin-section-head">
+                <div>
+                  <span class="admin-kicker">Входящие</span>
+                  <h3>Заявки клиентов</h3>
+                  <p>Менеджер меняет статус заявки и оставляет комментарий, который увидит клиент.</p>
+                </div>
+                <button class="btn ghost" type="button" id="btnRefreshRequests">Обновить</button>
+              </div>
+
+              <div class="panel-box" id="tbl" style="display:none;">
+                <div class="panel-head">
+                  <h3>Заявки клиентов</h3>
+                </div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Клиент</th>
+                      <th>Статус</th>
+                      <th>Источник</th>
+                      <th>Создана</th>
+                      <th>Заметка менеджера</th>
+                      <th>Действие</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="admin-section" id="admin-section-summary">
+              <div class="admin-section-head">
+                <div>
+                  <span class="admin-kicker">Статистика</span>
+                  <h3>Сводка по заявкам</h3>
+                  <p>Быстрый обзор количества заявок по каждому статусу.</p>
+                </div>
+                <button class="btn ghost" type="button" id="btnRefreshSummary">Обновить</button>
+              </div>
+              <div id="summary" class="panel-box" style="display:none;"></div>
+            </section>
+
+            <section class="admin-section" id="admin-section-users">
+              <div class="admin-section-head">
+                <div>
+                  <span class="admin-kicker">Доступы</span>
+                  <h3>Пользователи</h3>
+                  <p>Список клиентов, менеджеров и администраторов с контактами.</p>
+                </div>
+                <button class="btn ghost" type="button" id="btnRefreshUsers">Обновить</button>
+              </div>
+              <div class="panel-box">
+                <div class="panel-head">
+                  <h3>Пользователи системы</h3>
+                </div>
+                <div style="overflow-x:auto;">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Имя</th>
+                        <th>Email</th>
+                        <th>Телефон</th>
+                        <th>Роль</th>
+                        <th>Регистрация</th>
+                        <th>Действие</th>
+                      </tr>
+                    </thead>
+                    <tbody id="adminUsersBody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
+
+            <section class="admin-section" id="admin-section-solutions">
+              <div class="admin-section-head">
+                <div>
+                  <span class="admin-kicker">Библиотека</span>
+                  <h3>Каталог решений</h3>
+                  <p>Добавление карточек решений и снятие их с публикации на сайте.</p>
+                </div>
+                <button class="btn ghost" type="button" id="btnRefreshSolutions">Обновить</button>
+              </div>
+              <div class="panel-box" style="margin-bottom:18px;">
+                <div class="panel-head">
+                  <h3>Добавить решение</h3>
+                </div>
+                <div style="padding:18px;">
+                  <p class="muted" style="font-size:13px; margin-bottom:14px;">Slug — латиница и дефисы, например <code>metal-frame</code>. Удаление снимает решение с сайта.</p>
+                  <div class="three" style="margin-bottom:12px;">
+                    <div class="field" style="margin-bottom:0;">
+                      <label>Категория</label>
+                      <select id="adminSolutionCat" class="input"></select>
+                    </div>
+                    <div class="field" style="margin-bottom:0;">
+                      <label>Название</label>
+                      <input class="input" id="adminSolutionName" type="text" placeholder="Название">
+                    </div>
+                    <div class="field" style="margin-bottom:0;">
+                      <label>Slug</label>
+                      <input class="input mono" id="adminSolutionSlug" type="text" placeholder="latin-slug">
+                    </div>
+                  </div>
+                  <div class="three" style="margin-bottom:12px;">
+                    <div class="field" style="margin-bottom:0;">
+                      <label>Код</label>
+                      <input class="input mono" id="adminSolutionCode" type="text" placeholder="FRM-002">
+                    </div>
+                    <div class="field" style="margin-bottom:0;">
+                      <label>Материал, ₽</label>
+                      <input class="input mono" id="adminSolutionMat" type="number" min="0" step="1" value="0">
+                    </div>
+                    <div class="field" style="margin-bottom:0;">
+                      <label>Работы, ₽</label>
+                      <input class="input mono" id="adminSolutionWork" type="number" min="0" step="1" value="0">
+                    </div>
+                  </div>
+                  <div class="field" style="margin-bottom:12px;">
+                    <label>Краткое описание</label>
+                    <input class="input" id="adminSolutionShort" type="text" placeholder="Одна строка для карточки">
+                  </div>
+                  <div class="field" style="margin-bottom:12px;">
+                    <label>Тип материала</label>
+                    <input class="input" id="adminSolutionMatType" type="text" placeholder="ЖБИ, сталь…">
+                  </div>
+                  <div class="field" style="margin-bottom:12px;">
+                    <label>Обложка</label>
+                    <input class="input" id="adminSolutionCover" type="file" accept="image/*">
+                  </div>
+                  <div class="field" style="margin-bottom:12px;">
+                    <label><input type="checkbox" id="adminSolutionFeatured"> Избранное на сайте</label>
+                  </div>
+                  <button class="btn primary" type="button" id="btnAddSolution">Добавить в каталог</button>
+                  <span id="solutionMsg" class="msg" style="display:inline-block;margin-left:12px;"></span>
+                </div>
+              </div>
+              <div class="panel-box">
+                <div class="panel-head">
+                  <h3>Все решения</h3>
+                </div>
+                <div style="overflow-x:auto;">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Код</th>
+                        <th>Название</th>
+                        <th>Категория</th>
+                        <th>На сайте</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody id="adminSolutionsBody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
+
+            <section class="admin-section" id="admin-section-showcase">
+              <div class="admin-section-head">
+                <div>
+                  <span class="admin-kicker">Витрина</span>
+                  <h3>Готовые проекты</h3>
+                  <p>Добавление реализованных объектов и управление публикацией на витрине.</p>
+                </div>
+                <button class="btn ghost" type="button" id="btnRefreshShowcase">Обновить</button>
+              </div>
+              <div class="panel-box" style="margin-bottom:18px;">
+                <div class="panel-head">
+                  <h3>Добавить готовый проект</h3>
+                </div>
+                <div style="padding:18px;">
+                  <p class="muted" style="font-size:13px; margin-bottom:14px;">Готовый проект отображается на странице «Готовые проекты». Удаление снимает его с публикации.</p>
+                  <div class="field" style="margin-bottom:12px;">
+                    <label>Название</label>
+                    <input class="input" id="adminShowcaseName" type="text" placeholder="Например: Ангар 18×36 м">
+                  </div>
+                  <div class="field" style="margin-bottom:12px;">
+                    <label>Описание</label>
+                    <textarea id="adminShowcaseDesc" placeholder="Что построено, какие материалы, особенности"></textarea>
+                  </div>
+                  <div class="three" style="margin-bottom:12px;">
+                    <div class="field" style="margin-bottom:0;">
+                      <label>Адрес</label>
+                      <input class="input" id="adminShowcaseAddr" type="text" placeholder="г. Москва, ул. ...">
+                    </div>
+                    <div class="field" style="margin-bottom:0;">
+                      <label>Стоимость, ₽</label>
+                      <input class="input mono" id="adminShowcaseCost" type="number" min="0" step="1" placeholder="0">
+                    </div>
+                    <div class="field" style="margin-bottom:0;">
+                      <label>Обложка</label>
+                      <input class="input" id="adminShowcaseCover" type="file" accept="image/*">
+                    </div>
+                  </div>
+                  <button class="btn primary" type="button" id="btnAddShowcase">Добавить проект</button>
+                  <span id="showcaseMsg" class="msg" style="display:inline-block;margin-left:12px;"></span>
+                </div>
+              </div>
+              <div class="panel-box">
+                <div class="panel-head">
+                  <h3>Все готовые проекты</h3>
+                </div>
+                <div style="overflow-x:auto;">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Название</th>
+                        <th>Адрес</th>
+                        <th>Стоимость</th>
+                        <th>На сайте</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody id="adminShowcaseBody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
           </div>
         </div>
       </div>
-
-      <p id="msg" class="lead" style="color:var(--danger);"></p>
-
-      <div id="summary" class="panel-box" style="display:none; margin-bottom:18px;"></div>
-
-      <div class="panel-box" id="tbl" style="display:none;">
-        <div class="panel-head">
-          <h3>Заявки клиентов</h3>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Клиент</th>
-              <th>Статус</th>
-              <th>Источник</th>
-              <th>Создана</th>
-              <th>Заметка менеджера</th>
-              <th>Действие</th>
-            </tr>
-          </thead>
-          <tbody id="tbody"></tbody>
-        </table>
-      </div>
-    </div>
-  </section>
+    </section>
   </main>
 
   <footer>

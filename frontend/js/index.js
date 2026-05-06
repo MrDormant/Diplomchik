@@ -174,6 +174,24 @@
     };
     document.getElementById('btnGuestSubmit').onclick = submitGuestRequest;
 
+    function closeModal(modal) {
+      modal.classList.remove('open');
+    }
+
+    document.querySelectorAll('.modal-bg').forEach((modalBg) => {
+      modalBg.addEventListener('click', (event) => { 
+        if (event.target === modalBg) {
+        closeModal(modalBg)}
+      });
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        document.querySelectorAll('.modal-bg.open').forEach(closeModal);
+      }
+    });
+
+
     document.getElementById('btnDoLogin').onclick = async () => {
       const fd = new URLSearchParams();
       fd.append('username', document.getElementById('loginEmail').value);

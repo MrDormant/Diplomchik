@@ -26,6 +26,10 @@ class UserResponse(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class UserRoleUpdate(BaseModel):
+    role: UserRole
+
+
 class UserPublic(BaseModel):
     id: int
     full_name: str

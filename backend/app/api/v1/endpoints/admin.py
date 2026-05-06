@@ -14,7 +14,7 @@ from app.models.user import User
 from app.schemas.request import ServiceRequestResponse, ServiceRequestStatusUpdate
 from app.schemas.showcase import AdminShowcaseProjectRow
 from app.schemas.solution import AdminSolutionRow
-from app.schemas.user import UserResponse
+from app.schemas.user import UserResponse, UserRoleUpdate
 from app.crud import request as request_crud
 from app.crud import showcase as showcase_crud
 from app.crud import solution as solution_crud
@@ -113,6 +113,25 @@ def admin_list_users(
     limit: int = 500,
 ):
     return user_crud.list_users_admin(db, skip=skip, limit=limit)
+
+
+@router.patch("/users/{user_id}/role", response_model=UserResponse)
+def admin_update_user_role(
+    user_id: int,
+    payload: UserRoleUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_roles("admin")),
+):
+    if user_id == current_user.id:
+        raise HTTPException(status_code=400, detail="Нельзя менять собственную роль")
+    row = user_crud.get_user(db, user_id)
+    if not row:
+        raise HTTPException(status_code=404, detail="Пользователь не найден")
+    row.role = payload.role.value
+    db.add(row)
+    db.commit()
+    db.refresh(row)
+    return row
 
 
 @router.get("/solutions", response_model=list[AdminSolutionRow])
