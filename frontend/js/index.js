@@ -1,5 +1,15 @@
     const API = '/api/v1';
     const token = () => localStorage.getItem('access_token');
+    /** Счётчик запросов расчёта: отбрасываем устаревший ответ fetch при быстром вводе. */
+    let calcRecalcSeq = 0;
+
+    function normalizePhone(v) {
+      return (v || '').replace(/[\s()\-]/g, '');
+    }
+    function isValidPhone(v) {
+      const n = normalizePhone(v);
+      return /^(\+7|8|7)\d{10}$/.test(n);
+    }
 
     async function loadPublicConfig() {
       try {
@@ -23,14 +33,34 @@
       document.getElementById('btnRegister').style.display = ok ? 'none' : 'inline-flex';
     }
 
+    function formatApiDetail(detail) {
+      if (detail == null || detail === '') return '';
+      if (typeof detail === 'string') return detail;
+      if (Array.isArray(detail)) {
+        return detail
+          .map((part) => {
+            if (typeof part === 'string') return part;
+            if (part && typeof part === 'object' && typeof part.msg === 'string') return part.msg;
+            return '';
+          })
+          .filter(Boolean)
+          .join('; ');
+      }
+      if (typeof detail === 'object' && detail !== null && typeof detail.msg === 'string') return detail.msg;
+      try {
+        return JSON.stringify(detail);
+      } catch (_) {
+        return '';
+      }
+    }
+
     async function readErrorDetail(r) {
       try {
         const j = await r.json();
-        if (typeof j.detail === 'string') return j.detail;
-        if (Array.isArray(j.detail)) return j.detail.map(x => x.msg || x).join('; ');
-        return JSON.stringify(j.detail);
+        const line = formatApiDetail(j.detail);
+        return line || 'Запрос отклонён';
       } catch (_) {
-        return await r.text();
+        return (await r.text()) || 'Ошибка';
       }
     }
 
@@ -43,21 +73,101 @@
       document.getElementById('modalLogin').classList.add('open');
     }
 
+    /** @returns {{ ok: true, length: number, width: number, height: number } | { ok: false, reason: string }} */
+    function getCalcDims() {
+      const defs = [
+        { id: 'length', ru: 'длина', el: document.getElementById('length') },
+        { id: 'width', ru: 'ширина', el: document.getElementById('width') },
+        { id: 'height', ru: 'высота', el: document.getElementById('height') },
+      ];
+      const out = {};
+      for (const { id, ru, el } of defs) {
+        const raw = String(el.value ?? '').trim();
+        if (raw === '' || raw === '-' || raw === '+' || /^[+-]$/.test(raw)) {
+          return { ok: false, reason: 'Введите габариты: положительные числа в пределах, указанных у полей.' };
+        }
+        const n = parseFloat(raw);
+        if (!Number.isFinite(n) || n <= 0) {
+          return { ok: false, reason: 'Габариты должны быть положительными числами (без «−» и букв).' };
+        }
+        const min = parseFloat(el.getAttribute('min'));
+        const max = parseFloat(el.getAttribute('max'));
+        if (Number.isFinite(min) && n < min) {
+          return { ok: false, reason: ru.charAt(0).toUpperCase() + ru.slice(1) + `: не менее ${min} м.` };
+        }
+        if (Number.isFinite(max) && n > max) {
+          return { ok: false, reason: ru.charAt(0).toUpperCase() + ru.slice(1) + `: не более ${max} м.` };
+        }
+        out[id] = n;
+      }
+      return { ok: true, length: out.length, width: out.width, height: out.height };
+    }
+
     function calcPayload() {
+      const d = getCalcDims();
+      if (!d.ok) return null;
       return {
-        length: parseFloat(document.getElementById('length').value) || 0,
-        width: parseFloat(document.getElementById('width').value) || 0,
-        height: parseFloat(document.getElementById('height').value) || 0,
+        length: d.length,
+        width: d.width,
+        height: d.height,
         object_type: document.getElementById('objectType').value,
         frame_type: document.getElementById('frameType').value,
       };
     }
 
+    function setCalcResultPlaceholders() {
+      document.getElementById('rvArea').textContent = '—';
+      document.getElementById('rvPrice').textContent = '—';
+      document.getElementById('rvTime').textContent = '—';
+      document.getElementById('rvWeight').textContent = '—';
+    }
+
+    function setRequestButtonEnabled(on) {
+      const btn = document.getElementById('btnCreateRequest');
+      btn.disabled = !on;
+      btn.setAttribute('aria-disabled', on ? 'false' : 'true');
+    }
+
     async function recalc() {
-      const body = calcPayload();
+      const seq = ++calcRecalcSeq;
+      const hint = document.getElementById('calcInputHint');
+      const dims = getCalcDims();
+      if (!dims.ok) {
+        setCalcResultPlaceholders();
+        setRequestButtonEnabled(false);
+        if (hint) {
+          hint.textContent = dims.reason;
+          hint.hidden = false;
+        }
+        return;
+      }
+      if (hint) hint.hidden = true;
+
+      const body = {
+        length: dims.length,
+        width: dims.width,
+        height: dims.height,
+        object_type: document.getElementById('objectType').value,
+        frame_type: document.getElementById('frameType').value,
+      };
       const r = await fetch(API + '/calculate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-      if (!r.ok) { alert('Ошибка расчёта'); return; }
+      if (seq !== calcRecalcSeq) return;
+
+      if (!r.ok) {
+        setCalcResultPlaceholders();
+        setRequestButtonEnabled(false);
+        const errText = await readErrorDetail(r);
+        if (seq !== calcRecalcSeq) return;
+        if (hint) {
+          hint.textContent = 'Расчёт недоступен: ' + errText;
+          hint.hidden = false;
+        }
+        return;
+      }
       const d = await r.json();
+      if (seq !== calcRecalcSeq) return;
+      setRequestButtonEnabled(true);
+      if (hint) hint.hidden = true;
       document.getElementById('rvArea').textContent = d.area_sqm.toLocaleString('ru-RU') + ' м²';
       document.getElementById('rvPrice').textContent = d.estimated_cost_rub.toLocaleString('ru-RU') + ' ₽';
       document.getElementById('rvTime').textContent = d.construction_time_label;
@@ -65,9 +175,18 @@
     }
 
     async function createFlowAuthenticated() {
+      const dims = getCalcDims();
+      if (!dims.ok) {
+        alert(dims.reason);
+        return;
+      }
       const name = prompt('Название проекта (для сохранения расчёта)', 'Предварительный расчёт ангара');
       if (!name) return;
       const c = calcPayload();
+      if (!c) {
+        alert('Проверьте габариты перед сохранением проекта.');
+        return;
+      }
       const body = {
         name,
         object_type: c.object_type,
@@ -108,6 +227,15 @@
     }
 
     async function createFlow() {
+      const dims = getCalcDims();
+      if (!dims.ok) {
+        alert(dims.reason);
+        return;
+      }
+      if (document.getElementById('btnCreateRequest').disabled) {
+        alert('Дождитесь успешного расчёта или исправьте габариты.');
+        return;
+      }
       if (token()) {
         await createFlowAuthenticated();
         return;
@@ -125,7 +253,17 @@
         msgEl.className = 'msg';
         return;
       }
+      if (!isValidPhone(phone)) {
+        msgEl.textContent = 'Укажите корректный телефон, например +7 (495) 123-45-67';
+        msgEl.className = 'msg';
+        return;
+      }
       const c = calcPayload();
+      if (!c) {
+        msgEl.textContent = 'Проверьте габариты в калькуляторе (положительные числа в допустимых пределах).';
+        msgEl.className = 'msg';
+        return;
+      }
       const body = {
         full_name,
         phone,
@@ -144,9 +282,10 @@
       if (!r.ok) {
         try {
           const e = await r.json();
-          msgEl.textContent = e.detail || 'Ошибка отправки';
+          const line = formatApiDetail(e.detail);
+          msgEl.textContent = line || 'Ошибка отправки';
         } catch (_) {
-          msgEl.textContent = await r.text();
+          msgEl.textContent = await r.text() || 'Ошибка отправки';
         }
         msgEl.className = 'msg';
         return;
@@ -207,22 +346,45 @@
     };
 
     document.getElementById('btnDoRegister').onclick = async () => {
-      const body = {
-        full_name: document.getElementById('regName').value,
-        email: document.getElementById('regEmail').value,
-        phone: document.getElementById('regPhone').value,
-        password: document.getElementById('regPassword').value,
-      };
       const msg = document.getElementById('regMsg');
+      const full_name = document.getElementById('regName').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const phone = document.getElementById('regPhone').value.trim();
+      const password = document.getElementById('regPassword').value;
+      if (!full_name || !email || !phone || !password) {
+        msg.textContent = 'Заполните все поля';
+        msg.className = 'msg';
+        return;
+      }
+      if (!isValidPhone(phone)) {
+        msg.textContent = 'Укажите корректный телефон, например +7 (495) 123-45-67';
+        msg.className = 'msg';
+        return;
+      }
+      if (password.length < 6) {
+        msg.textContent = 'Пароль должен быть не короче 6 символов';
+        msg.className = 'msg';
+        return;
+      }
+      const body = { full_name, email, phone, password };
       const r = await fetch(API + '/users', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-      if (!r.ok) { const e = await r.json(); msg.textContent = e.detail || 'Ошибка'; msg.className = 'msg'; return; }
+      if (!r.ok) { msg.textContent = await readErrorDetail(r); msg.className = 'msg'; return; }
       msg.textContent = 'Аккаунт создан. Войдите.'; msg.className = 'msg ok';
       document.getElementById('modalRegister').classList.remove('open');
       document.getElementById('modalLogin').classList.add('open');
     };
 
+    function showPolicyStub(e) {
+      e.preventDefault();
+      alert('Текст политики обработки персональных данных и пользовательского соглашения публикуется компанией ООО «РостГидроСтрой» и применяется к взаимодействию пользователя с сервисом.');
+    }
+    document.querySelectorAll('a[id^="lnkPolicy"], a[id^="lnkTerms"]').forEach(a => {
+      a.addEventListener('click', showPolicyStub);
+    });
+
     loadPublicConfig();
     authUi();
+    setRequestButtonEnabled(false);
     recalc();
 
     (function openModalsFromQuery() {

@@ -16,6 +16,13 @@
       }[c]));
     }
 
+    function coverSrc(url) {
+      let u = (url || '').trim() || '/assets/library-covers/ALUDAR.jpg';
+      if (/^https?:\/\//i.test(u)) return u;
+      if (!u.startsWith('/')) u = '/' + u.replace(/^\/+/, '');
+      return u;
+    }
+
     async function load() {
       const r = await fetch(API + '/solutions');
       const list = await r.json();
@@ -29,9 +36,9 @@
         const material = s.material_type ? escapeHtml(s.material_type) : 'Типовое решение';
         const total = Number(s.base_material_cost || 0) + Number(s.base_work_cost || 0);
         const price = total ? ('от ' + total.toLocaleString('ru-RU') + ' ₽') : '—';
-        const cover = escapeHtml(s.cover_image || '/assets/library-covers/ALUDAR.jpg');
+        const cover = escapeHtml(coverSrc(s.cover_image));
         el.innerHTML =
-          '<img class="solution-cover" src="' + cover + '" alt="Обложка: ' + escapeHtml(s.name) + '">' +
+          '<img class="solution-cover" src="' + cover + '" alt="Обложка: ' + escapeHtml(s.name) + '" onerror="this.onerror=null;this.src=\'/assets/library-covers/ALUDAR.jpg\'">' +
           code +
           '<h4>' + escapeHtml(s.name) + '</h4>' +
           '<p>' + escapeHtml(s.short_description || '') + '</p>' +
@@ -50,7 +57,8 @@
         location.href = '/';
         return;
       }
-      const comment = document.getElementById('comment').value || null;
+      const commentEl = document.getElementById('comment');
+      const comment = commentEl && commentEl.value ? commentEl.value.trim() || null : null;
       const r = await fetch(API + '/requests', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token() },
@@ -60,6 +68,14 @@
       alert('Заявка отправлена. Проверьте почту в Mailpit и личный кабинет.');
       location.href = '/cabinet.html';
     }
+
+    function showPolicyStub(e) {
+      e.preventDefault();
+      alert('Текст политики обработки персональных данных и пользовательского соглашения публикуется компанией ООО «РостГидроСтрой» и применяется к взаимодействию пользователя с сервисом.');
+    }
+    document.querySelectorAll('a[id^="lnkLibPolicy"], a[id^="lnkLibTerms"]').forEach(a => {
+      a.addEventListener('click', showPolicyStub);
+    });
 
     cfg();
     load();

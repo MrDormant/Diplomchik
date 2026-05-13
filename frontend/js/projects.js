@@ -17,6 +17,13 @@
       }[c]));
     }
 
+    function coverSrc(url) {
+      let u = (url || '').trim() || '/assets/library-covers/ALUDAR.jpg';
+      if (/^https?:\/\//i.test(u)) return u;
+      if (!u.startsWith('/')) u = '/' + u.replace(/^\/+/, '');
+      return u;
+    }
+
     function formatRub(value) {
       const n = Number(value || 0);
       if (!n) return '—';
@@ -40,11 +47,11 @@
       list.forEach(p => {
         const el = document.createElement('div');
         el.className = 'sol';
-        const cover = escapeHtml(p.cover_image || '/assets/library-covers/ALUDAR.jpg');
+        const cover = escapeHtml(coverSrc(p.cover_image));
         const address = p.address ? escapeHtml(p.address) : 'Адрес уточняется';
         const cost = formatRub(p.project_cost);
         el.innerHTML =
-          '<img class="solution-cover" src="' + cover + '" alt="Проект: ' + escapeHtml(p.name) + '">' +
+          '<img class="solution-cover" src="' + cover + '" alt="Проект: ' + escapeHtml(p.name) + '" onerror="this.onerror=null;this.src=\'/assets/library-covers/ALUDAR.jpg\'">' +
           '<div class="code-tag">PROJECT · ' + p.id + '</div>' +
           '<h4>' + escapeHtml(p.name) + '</h4>' +
           '<p>' + escapeHtml(p.description || '') + '</p>' +

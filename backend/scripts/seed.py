@@ -7,6 +7,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from sqlalchemy.orm import Session  # noqa: E402
@@ -21,6 +22,8 @@ from app.models.solution import Solution, SolutionCategory  # noqa: E402
 
 
 DEFAULT_COVER_IMAGE = "/assets/library-covers/ALUDAR.jpg"
+HANGAR_COVER_IMAGE = "/assets/library-covers/hangar-industrial.jpg"
+_LEGACY_HANGAR_UPLOAD = "/assets/library-covers/4e10ea5a667043c59cae83935ec84911.jpg"
 
 
 def seed() -> None:
@@ -65,7 +68,7 @@ def seed() -> None:
                     base_material_cost=9200,
                     base_work_cost=4100,
                     material_type="Оцинкованная сталь",
-                    cover_image=DEFAULT_COVER_IMAGE,
+                    cover_image=HANGAR_COVER_IMAGE,
                     is_featured=True,
                 ),
                 Solution(
@@ -90,6 +93,17 @@ def seed() -> None:
             {Solution.cover_image: DEFAULT_COVER_IMAGE},
             synchronize_session=False,
         )
+
+        hangar_file = REPO_ROOT / "frontend" / "library-covers" / "hangar-industrial.jpg"
+        if hangar_file.is_file():
+            db.query(Solution).filter(Solution.slug == "lstk-frame").update(
+                {Solution.cover_image: HANGAR_COVER_IMAGE},
+                synchronize_session=False,
+            )
+            db.query(Solution).filter(Solution.cover_image == _LEGACY_HANGAR_UPLOAD).update(
+                {Solution.cover_image: HANGAR_COVER_IMAGE},
+                synchronize_session=False,
+            )
 
         if db.query(User).filter(User.email == "admin@test.local").first() is None:
             db.add(

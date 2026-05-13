@@ -1,13 +1,13 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.core.config import settings
 from app.core.enums import FrameType, ObjectType
 
 
 class CalcInput(BaseModel):
-    length: float
-    width: float
-    height: float
+    length: float = Field(..., gt=0, le=500, description="Длина объекта, м (0 < L ≤ 500)")
+    width: float = Field(..., gt=0, le=500, description="Ширина объекта, м (0 < W ≤ 500)")
+    height: float = Field(..., gt=0, le=50, description="Высота объекта, м (0 < H ≤ 50)")
     object_type: ObjectType | None = None
     frame_type: FrameType | None = None
 

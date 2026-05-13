@@ -29,7 +29,8 @@ services:
       - "8000:8000"
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/construction_db
-      SECRET_KEY: dev-secret-change-in-production
+      # Только для локального Docker (≥32 символа — требование Settings.secret_key).
+      SECRET_KEY: docker-local-dev-placeholder-key-change-for-real-deploy-32
       SMTP_HOST: mailpit
       SMTP_PORT: "1025"
       SMTP_USE_TLS: "false"

@@ -6,13 +6,22 @@ from app.core.enums import FrameType, ObjectType, RequestSource, RequestStatus
 from app.schemas.user import UserPublic
 
 
+PHONE_PATTERN = r"^[\+\d\s\-\(\)]{10,20}$"
+
+
 class GuestCalculatorRequestCreate(BaseModel):
 
-    full_name: str = Field(..., min_length=1, max_length=255)
-    phone: str = Field(..., min_length=5, max_length=40)
-    length: float
-    width: float
-    height: float
+    full_name: str = Field(..., min_length=2, max_length=255)
+    phone: str = Field(
+        ...,
+        min_length=10,
+        max_length=20,
+        pattern=PHONE_PATTERN,
+        description="Телефон в свободном формате: +7 (495) 123-45-67, 84951234567 и т.п.",
+    )
+    length: float = Field(..., gt=0, le=500)
+    width: float = Field(..., gt=0, le=500)
+    height: float = Field(..., gt=0, le=50)
     object_type: ObjectType | None = None
     frame_type: FrameType | None = None
     comment: str | None = Field(None, max_length=4000)

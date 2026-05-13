@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>СтройТехПроект — промышленные ангары и металлоконструкции</title>
-  <meta name="description" content="СтройТехПроект — проектирование и строительство быстровозводимых промышленных ангаров, складов и цехов. Онлайн-расчёт стоимости и сроков, заявка без регистрации.">
+  <title>РостГидроСтрой — промышленные ангары и металлоконструкции</title>
+  <meta name="description" content="РостГидроСтрой — проектирование и строительство быстровозводимых промышленных ангаров, складов и цехов. Онлайн-расчёт стоимости и сроков, заявка без регистрации.">
   <meta name="keywords" content="ангары, склады, металлоконструкции, ЛСТК, промышленное строительство, расчёт стоимости">
   <meta name="theme-color" content="#0b3d91">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ru_RU">
-  <meta property="og:site_name" content="СтройТехПроект">
-  <meta property="og:title" content="СтройТехПроект — промышленные ангары и металлоконструкции">
+  <meta property="og:site_name" content="РостГидроСтрой">
+  <meta property="og:title" content="РостГидроСтрой — промышленные ангары и металлоконструкции">
   <meta property="og:description" content="Онлайн-расчёт стоимости и сроков строительства промышленных объектов: ангары, склады, цеха.">
   <meta property="og:url" content="/">
-  <meta property="og:image" content="/assets/library-covers/ALUDAR.jpg">
+  <meta property="og:image" content="/assets/library-covers/hangar-industrial.jpg">
   <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
@@ -21,9 +21,9 @@
     <div class="container top-row">
       <a href="/" class="logo-link" aria-label="Главная страница">
         <div class="logo">
-          <div class="mark">СТ</div>
+          <div class="mark">РГС</div>
           <div>
-            <h1>СтройТехПроект</h1>
+            <h1>РостГидроСтрой</h1>
             <small>Инжиниринг промышленных объектов</small>
           </div>
         </div>
@@ -59,7 +59,7 @@
       </div>
       <div class="company-prose">
         <p>
-          <strong>ООО «СтройТехПроект»</strong> — инженерно-производственная компания, специализирующаяся на
+          <strong>ООО «РостГидроСтрой»</strong> — инженерно-производственная компания, специализирующаяся на
           проектировании и строительстве быстровозводимых промышленных зданий: ангаров, складов,
           производственных цехов и технических комплексов. Мы объединяем опыт проектных бюро и монтажных
           бригад, чтобы сократить сроки от идеи до ввода объекта в эксплуатацию.
@@ -127,9 +127,16 @@
           <div><span>Материал</span><b class="mono" id="rvWeight">—</b></div>
         </div>
 
+        <p class="note" id="calcInputHint" hidden style="color: var(--error, #c0392b); margin-top: 8px;"></p>
+
         <div class="actions-calc single">
           <button class="btn cyan" id="btnCreateRequest" type="button">Оформить заявку</button>
         </div>
+        <p class="note" style="margin-top:8px;">
+          Нажимая кнопку «Оформить заявку», вы соглашаетесь
+          с <a href="#" id="lnkPolicy1">политикой обработки персональных данных</a>
+          и <a href="#" id="lnkTerms1">пользовательским соглашением</a>.
+        </p>
         <p class="note">* Расчёт предварительный. Итоговая стоимость — после проектирования.</p>
       </div>
     </div>
@@ -156,12 +163,17 @@
       <p class="pitch">В личном кабинете отображаются сохранённые расчёты и статусы заявок — удобно отслеживать ответ менеджера без звонков.</p>
       <input class="input" type="text" id="regName" placeholder="ФИО">
       <input class="input" type="email" id="regEmail" placeholder="Email" autocomplete="email">
-      <input class="input" type="tel" id="regPhone" placeholder="Телефон (обязательно для связи)" autocomplete="tel">
+      <input class="input" type="tel" id="regPhone" placeholder="Телефон, например +7 (495) 123-45-67" autocomplete="tel" inputmode="tel">
       <input class="input" type="password" id="regPassword" placeholder="Пароль" autocomplete="new-password">
       <div class="row">
         <button class="btn primary" type="button" id="btnDoRegister" style="flex:1;">Зарегистрироваться</button>
         <button class="btn ghost" type="button" id="btnCloseRegister" style="flex:1;">Закрыть</button>
       </div>
+      <p class="note" style="margin-top:8px;">
+        Нажимая «Зарегистрироваться», вы соглашаетесь с
+        <a href="#" id="lnkPolicy2">политикой обработки персональных данных</a>
+        и <a href="#" id="lnkTerms2">пользовательским соглашением</a>.
+      </p>
       <div class="msg" id="regMsg"></div>
     </div>
   </div>
@@ -172,7 +184,7 @@
       <h3>Без регистрации</h3>
       <p class="pitch">Оставьте имя и телефон — оператор свяжется с вами. Чтобы видеть статус заявки и историю расчётов в одном месте, можно <button type="button" class="btn ghost" id="btnGuestToRegister" style="display:inline;padding:4px 10px;font-size:12px;vertical-align:middle;">зарегистрироваться</button> и пользоваться личным кабинетом.</p>
       <input class="input" type="text" id="guestName" placeholder="Как к вам обращаться" autocomplete="name">
-      <input class="input" type="tel" id="guestPhone" placeholder="Телефон" autocomplete="tel">
+      <input class="input" type="tel" id="guestPhone" placeholder="Телефон, например +7 (495) 123-45-67" autocomplete="tel" inputmode="tel">
       <div class="field" style="margin-bottom:10px;">
         <label>Комментарий (необязательно)</label>
         <textarea id="guestComment" placeholder="Пожелания по объекту, регион и т.п." maxlength="4000"></textarea>
@@ -181,6 +193,11 @@
         <button class="btn primary" type="button" id="btnGuestSubmit" style="flex:1;">Отправить заявку</button>
         <button class="btn ghost" type="button" id="btnGuestClose" style="flex:1;">Отмена</button>
       </div>
+      <p class="note" style="margin-top:8px;">
+        Нажимая «Отправить заявку», вы соглашаетесь с
+        <a href="#" id="lnkPolicy3">политикой обработки персональных данных</a>
+        и <a href="#" id="lnkTerms3">пользовательским соглашением</a>.
+      </p>
       <div class="msg" id="guestMsg"></div>
     </div>
   </div>
@@ -189,10 +206,10 @@
 
   <footer>
     <div class="container row">
-      <div>© СтройТехПроект · инжиниринг промышленных объектов</div>
+      <div>© РостГидроСтрой · инжиниринг промышленных объектов</div>
       <div class="mono">
         <a id="footerTel" href="tel:+74951234567">+7 (495) 123-45-67</a>
-        · <a href="mailto:info@stroytechproekt.ru">info@stroytechproekt.ru</a>
+        · <a href="mailto:info@rosgidrostroy.ru">info@rosgidrostroy.ru</a>
       </div>
     </div>
   </footer>

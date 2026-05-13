@@ -5,11 +5,20 @@ from pydantic import BaseModel, EmailStr, Field
 from app.core.enums import UserRole
 
 
+PHONE_PATTERN = r"^[\+\d\s\-\(\)]{10,20}$"
+
+
 class UserCreate(BaseModel):
-    full_name: str
+    full_name: str = Field(..., min_length=2, max_length=255)
     email: EmailStr
-    phone: str = Field(..., min_length=5, description="Для связи оператора")
-    password: str = Field(..., min_length=6)
+    phone: str = Field(
+        ...,
+        min_length=10,
+        max_length=20,
+        pattern=PHONE_PATTERN,
+        description="Телефон для связи оператора (10–20 символов, цифры/+/-/пробелы/скобки)",
+    )
+    password: str = Field(..., min_length=6, max_length=128)
 
 
 class UserResponse(BaseModel):

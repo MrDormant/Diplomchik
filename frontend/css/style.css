@@ -77,6 +77,7 @@ header.top {
   background: var(--navy); color: #fff; font-weight: 800;
   display: flex; align-items: center; justify-content: center;
   letter-spacing: .5px; position: relative;
+  font-size: 11px;
 }
 .logo .mark::after {
   content: ''; position: absolute; inset: 3px;
@@ -618,7 +619,7 @@ footer .row {
   .logo .mark {
     width: 36px;
     height: 36px;
-    font-size: 13px;
+    font-size: 10px;
   }
 
   .logo h1 {
@@ -990,7 +991,7 @@ footer .row {
   .logo .mark {
     width: 32px;
     height: 32px;
-    font-size: 12px;
+    font-size: 9px;
   }
 
   .logo h1 {

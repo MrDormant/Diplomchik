@@ -31,7 +31,7 @@ docker compose exec api python backend/scripts/seed.py
 
 1. Установите зависимости: `pip install -r requirements.txt`
 2. Поднимите PostgreSQL и при необходимости Mailpit (или укажите реальный SMTP в `.env`).
-3. Скопируйте `.env.example` в `.env` и задайте `DATABASE_URL` (логин, пароль и имя БД должны совпадать с тем, что настроено в PostgreSQL).
+3. Скопируйте `.env.example` в `.env` и задайте **`DATABASE_URL`** и **`SECRET_KEY`** (случайная строка не короче 32 символов; подпись JWT). При запуске через Docker переменные для сервиса `api` уже заданы в `docker-compose.yml`.
 4. Создайте схему и (по желанию) тестовые данные: `python backend/scripts/seed.py` (внутри скрипта вызывается Alembic). Либо отдельно: `alembic -c backend/alembic.ini upgrade head`, затем `python backend/scripts/seed.py`.
 5. `uvicorn app.main:app --reload --app-dir backend`
 
